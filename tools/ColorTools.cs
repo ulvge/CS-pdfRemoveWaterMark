@@ -44,13 +44,13 @@ namespace pdfRemoveWaterMark.tools
             int ch = (chVal * alpha + (255 - alpha) * 255) / 255;
             return ch;
         }
-        public static Color ARGB2RGB(string color)
+        public static bool ARGB2RGB(string color, out Color argb)
         {
-            Color defaultColor = Color.FromArgb(0, 0, 0);
+            argb = Color.FromArgb(0, 0, 0);
             string[] co = color.Split(',');
             if (co.Length != 3)
             {
-                return defaultColor;
+                return false;
             }
 
             int R = channle(ConvertString2Number(co[0]), 255);
@@ -59,14 +59,14 @@ namespace pdfRemoveWaterMark.tools
 
             try
             {
-                Color res = Color.FromArgb(R, G, B);
-                return res;
+                argb = Color.FromArgb(R, G, B);
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("ARGB2RGB :" + ex.Message);
             }
-            return defaultColor;
+            return false;
         }
 
         public static float RGBDistance(FS_COLOR col1, Color col2)

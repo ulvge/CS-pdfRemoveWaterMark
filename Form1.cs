@@ -1,5 +1,6 @@
 ﻿using Debug.tools;
 using Patagames.Pdf;
+using Patagames.Pdf.Enums;
 using Patagames.Pdf.Net;
 using pdfRemoveWaterMark.tools;
 using System;
@@ -20,6 +21,7 @@ namespace pdfRemoveWaterMark
 {
     public partial class MainForm : Form
     {
+        static public Point g_dumpImageCoordinate = new Point(100, 100);
         private const string TEMP_SPLIT = "tempSplit__";
         private const string TEMP_PURE = "tempRemoved__";
         private const string TEMP_IMAGES = "tempImages__";
@@ -58,8 +60,9 @@ namespace pdfRemoveWaterMark
             AppendLog("\t会将pdf文档中，已经去掉的图片保存下来");
             AppendLog("\t图片文件夹名中的宽高参数，可依需要进行调整，确保是想去除的内容");
             AppendLog("\t1_0--wh_401x260.png,表示第1页的第0个水印，宽是401,高是260");
-            AppendLog("即不选择文本，也不选择图片，则会自动按颜色识别");
+            AppendLog("关于水印按颜色来去除：");
             AppendLog("\t颜色格式，如果16进制，加上0x。");
+            AppendLog("即不选择文本，也不选择图片，而且颜色值也为空，则会自动识别每页中相同的部分，然后会当成水印而去除");
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -70,9 +73,9 @@ namespace pdfRemoveWaterMark
             tb_log.Clear();
             AddUsage();
 
-            string pageModeString = iniHelper.getString(this.Name, pageModeFiled, string.Empty);
             try
             {
+                string pageModeString = iniHelper.getString(this.Name, pageModeFiled, string.Empty);
                 if (bool.Parse(pageModeString))
                 {
                     rb_all.Checked = true;
@@ -83,7 +86,7 @@ namespace pdfRemoveWaterMark
                     rb_all.Checked = false;
                     rb_range.Checked = true;
                 }
-
+                PdfCommon.Initialize();
             }
             catch (Exception ex)
             {
@@ -173,7 +176,7 @@ namespace pdfRemoveWaterMark
         /// <param name="accuracy">输入，允许的最大误差</param>
         /// <param name="tolerance">输入，允许的最大误差</param>
         /// <returns></returns>
-        private bool IsMatchTextRect(FS_RECTF objRect, WatermarkFound textRect, out PointF outTolerance, float accuracy = 30, float inTolerance = 0.1f)
+        private bool IsMatchTextRect(FS_RECTF objRect, WatermarkTextFound textRect, out PointF outTolerance, float accuracy = 30, float inTolerance = 0.1f)
         {
             outTolerance = new PointF(0, 0);
             foreach (iText.Kernel.Geom.Rectangle rect in textRect.warterMarkBounds)
@@ -252,6 +255,12 @@ namespace pdfRemoveWaterMark
             string outputFileName = System.IO.Path.Combine(outputPdfFolder, $"{oriFileNameOnly}_{date +"-" + time}.pdf");
             return outputFileName;
         }
+        /// <summary>
+        /// 两个矩形，是否非常相似。
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         private bool IsExistOverlap(FS_RECTF a, FS_RECTF b)
         {
             if (a.Equals(b)|| ((Math.Round(a.Height, 2) == Math.Round(b.Height, 2)) && (Math.Round(a.Width, 2) == Math.Round(b.Width, 2)) &&
@@ -264,10 +273,76 @@ namespace pdfRemoveWaterMark
             return false;
         }
         /// <summary>
+        /// 根据查找到的所有obj，计算出最大的矩形外框，新建的查找到的文件中，页面尺寸，就用这个值
+        /// </summary>
+        /// <param name="sameObjectList"></param>
+        /// <returns></returns>
+        private FS_RECTF CalculateMaxRectangle(List<PdfPageObject> sameObjectList)
+        {
+            float expandValue = 5f; // 扩大5mm
+            if (sameObjectList == null || sameObjectList.Count == 0)
+            {
+                //bottom-left corner
+                FS_RECTF defalutRect = new FS_RECTF(0, 11.69f * 72, 8.27f * 72,  0);
+                return defalutRect;
+            }
+
+            // 初始化最小外接矩形
+            FS_RECTF maxRect = sameObjectList[0].BoundingBox;
+
+            // 遍历列表，更新最小外接矩形
+            foreach (var obj in sameObjectList)
+            {
+                var rect = obj.BoundingBox;
+                maxRect.left = Math.Min(maxRect.left, rect.left);
+                maxRect.top = Math.Max(maxRect.top, rect.top);
+                maxRect.right = Math.Max(maxRect.right, rect.right);
+                maxRect.bottom = Math.Min(maxRect.bottom, rect.bottom);
+            }
+
+            maxRect.left = Math.Max(maxRect.left - expandValue, 0);
+            maxRect.top = Math.Max(maxRect.top - expandValue, 0);
+            maxRect.right += expandValue;
+            maxRect.bottom += expandValue;
+            return maxRect;
+        }
+        /// <summary>
+        /// 把所有查找到的相同obj，画出来，存放到单独的文件名
+        /// </summary>
+        /// <param name="objectList"></param>
+        public void CreatePdfWithObjects(List<PdfPageObject> objectList, string fileName)
+        {
+            try
+            {
+                // Create a new PDF document
+                PdfDocument doc = PdfDocument.CreateNew();
+                FS_RECTF pageSize = CalculateMaxRectangle(objectList);
+                // Step 2: Add new page
+                // Arguments: page width: 8.27", page height: 11.69", Unit of measure: inches
+                //  The PDF unit of measure is point. There are 72 points in one inch.
+                var page = doc.Pages.InsertPageAt(doc.Pages.Count, pageSize.Width, pageSize.Height);
+
+                foreach (PdfPageObject item in objectList)
+                {
+                    page.PageObjects.Add(item);
+                }
+                // Step 5: Generate page content and save pdf file
+                // argument: PDF file name
+                page.GenerateContent();
+
+                doc.Save(fileName, SaveFlags.NoIncremental);
+                doc.Dispose();
+            }
+            catch (Exception ex)
+            {
+                AppendLog(ex.Message);
+            }
+        }
+        /// <summary>
         /// 找出所有相同的object,not delete
         /// </summary>
         /// <param name="itext7"></param>
-        private List<PdfPageObject> AutoFindSameObject(iText7 itext7)
+        private List<PdfPageObject> AutoFindSameObject(iText7 itext7, int searchStartPageNum)
         {
             if (g_pageNumber <= 1)
             {
@@ -277,7 +352,7 @@ namespace pdfRemoveWaterMark
             int validPageCount = 0;
             List<PdfPageObject> foundPageObj = new List<PdfPageObject>();
             PdfDocument baseDoc = null;
-            for (int pageNum = WARTERMARK_SEARCH_START_PAGE_NUM; pageNum <= g_pageNumber; pageNum++)
+            for (int pageNum = searchStartPageNum; pageNum <= g_pageNumber; pageNum++)
             {
                 if (!itext7.IsPageInPageRange(pageNum))
                 {
@@ -308,6 +383,33 @@ namespace pdfRemoveWaterMark
                             }
                         }
                         document.Dispose();
+                        break;
+                    case 2://进一步筛选list，查看在剩下页中，某个元素x,是否存在于list中，如果存在，则保留，说明是共有的；不存在，则将list中的x删掉
+                        for (int found = foundPageObj.Count - 1; found >= 0; found--)
+                        {
+                            bool isFoundSame = false;
+                            PdfPageObject foundObj = foundPageObj[found];
+                            int j;
+                            for (j = 1; j <= pageObj.PageObjects.Count - 1; j++)
+                            {
+                                if (!pageObj.PageObjects[j].ObjectType.Equals(foundObj.ObjectType))
+                                {
+                                    continue;
+                                }
+                                if (IsExistOverlap(pageObj.PageObjects[j].BoundingBox, foundObj.BoundingBox))
+                                {
+                                    isFoundSame = true;
+                                    break;
+                                }
+                            }
+                            if (!isFoundSame)
+                            {
+                                // not found
+                                foundPageObj.RemoveAt(found);
+                            }
+                        }
+
+                        document.Dispose();
                         goto _exit;
                     default:
                         break;
@@ -321,30 +423,78 @@ _exit:
             }
             return foundPageObj;
         }
+        /// <summary>
+        /// 当既没有设定水印是图片，也没有设定是文本的时候，就用自动搜索到的每页都存在的obj,foundSameObject，
+        /// 在page中查找，类型相同，并且尺寸匹配，返回true。
+        /// </summary>
+        /// <param name="pageObjects"></param>
+        /// <param name="foundSameObject"></param>
+        /// <returns></returns>
         private bool SearchObjectFromSameFoundList(PdfPageObject pageObjects, List<PdfPageObject> foundSameObject)
         {
             foreach (PdfPageObject item in foundSameObject)
             {
+                // 类型相同，并且尺寸相等
                 if (pageObjects.ObjectType.Equals(item.ObjectType) && IsExistOverlap(pageObjects.BoundingBox, item.BoundingBox))
                 {
-                    Color SetColor = ColorTools.ARGB2RGB(tb_color.Text);
-                    float distance = ColorTools.RGBDistance(pageObjects.FillColor, SetColor);
-                    if (distance < 200)
-                    {
-                        Console.WriteLine("distance :" + distance);
-                        return true;
-                    }
-
-                    Console.WriteLine("distance not:" + distance);
+                    return true;
                 }
             }
             return false;
         }
         /// <summary>
+        /// 当既没有设定水印是图片，也没有设定是文本的时候，就用自动搜索到的每页都存在的obj,foundSameObject，在page中查找，如果匹配，返回true,则删除它。
+        /// </summary>
+        /// <param name="pageObjects"></param>
+        /// <param name="foundSameObject"></param>
+        /// <returns></returns>
+        private bool SearchObjectByColor(PdfPageObject pageObjects, Color destColor)
+        {
+            Color SetColor;
+            bool isSpecifiedColor = ColorTools.ARGB2RGB(tb_color.Text, out SetColor);
+
+            //有指定，则既要满足坐标，也要满足颜色
+            float distance = ColorTools.RGBDistance(pageObjects.FillColor, destColor);
+            if (distance < 200)
+            {
+                Console.WriteLine("distance :" + distance);
+                return true;
+            }
+
+            Console.WriteLine("distance not:" + distance);
+            return false;
+        }
+        private void AppenDumpImageToList(List<PdfPageObject> objectList)
+        {
+            try
+            {
+                // Create a new PDF document
+                PdfDocument doc = PdfDocument.CreateNew();
+
+                // Step 3: Add graphics and text contents to the page
+                // Insert image from file using standart System.Drawing.Bitmap class
+                using (PdfBitmap img = PdfBitmap.FromBitmap(Properties.Resources.dump_300K))
+                {
+                    PdfImageObject imageObject = PdfImageObject.Create(doc, img, g_dumpImageCoordinate.X, g_dumpImageCoordinate.Y);
+                    objectList.Add(imageObject.Clone());
+                }
+                using (PdfBitmap img = PdfBitmap.FromBitmap(Properties.Resources.dump_600K))
+                {
+                    PdfImageObject imageObject = PdfImageObject.Create(doc, img, g_dumpImageCoordinate.X, g_dumpImageCoordinate.Y);
+                    objectList.Add(imageObject.Clone());
+                }
+                doc.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        /// <summary>
         /// 删除 水印
         /// </summary>
         /// <param oriFileName="name"></param>
-        private bool Patagames_removeWaterMarkOneByOne(string[] textWarterMark, ImageRectArea imageRectAreaWarterMark, List<WatermarkFound> watermarkFounds, iText7 itext7, out string msg)
+        private bool Patagames_removeWaterMarkOneByOne(string[] textWarterMark, ImageRectArea imageRectAreaWarterMark, List<WatermarkTextFound> watermarkFounds, iText7 itext7, out string msg)
         {
             msg = string.Empty;
             if (!Directory.Exists(TEMP_SPLIT))
@@ -359,7 +509,9 @@ _exit:
             {
                 List<PdfPageObject> foundSameObjectList = new List<PdfPageObject>();
                 if (!cb_isText.Checked && !cb_isImage.Checked) {
-                    foundSameObjectList = AutoFindSameObject(itext7);
+                    foundSameObjectList = AutoFindSameObject(itext7, WARTERMARK_SEARCH_START_PAGE_NUM);
+                    //CreatePdfWithObjects(foundSameObjectList, TEMP_PURE + "\\sameObj.pdf");
+                    AppenDumpImageToList(foundSameObjectList);
                 }
                 for (int pageNum = 1; pageNum <= g_pageNumber; pageNum++)
                 { 
@@ -391,7 +543,7 @@ _exit:
                     }
 
                     PdfPage pageObj = document.Pages[0]; // only one
-                    WatermarkFound targetWatermarkFound = watermarkFounds.FirstOrDefault(w => w.page == pageNum);
+                    WatermarkTextFound targetWatermarkFound = watermarkFounds.FirstOrDefault(w => w.page == pageNum);
 
                     for (int j = pageObj.PageObjects.Count - 1; j >= 0; j--)
                     {
@@ -452,12 +604,25 @@ _exit:
                                     break;
                             }
                         }
-                        else // Automatic identification watermark
+                        else // is not text, no image,then, Automatic search watermark
                         {
-                            if (SearchObjectFromSameFoundList(pageObj.PageObjects[j], foundSameObjectList))
+                            Color setColor;
+                            bool isSpecifiedColor = ColorTools.ARGB2RGB(tb_color.Text, out setColor);
+                            if (isSpecifiedColor) // is color close
                             {
-                                removeCount++;
-                                pageObj.PageObjects.RemoveAt(j);
+                                if(SearchObjectByColor(pageObj.PageObjects[j], setColor))
+                                {
+                                    removeCount++;
+                                    pageObj.PageObjects.RemoveAt(j);
+                                }
+                            }
+                            else
+                            {  // Finally, automatic processing
+                                if (SearchObjectFromSameFoundList(pageObj.PageObjects[j], foundSameObjectList))
+                                {
+                                    removeCount++;
+                                    pageObj.PageObjects.RemoveAt(j);
+                                }
                             }
                         }
                     }
@@ -484,7 +649,7 @@ _exit:
             }
             catch (Exception ex)
             {
-                msg = ex.Message + ex.StackTrace;
+                msg = ex.Message + Environment.NewLine + ex.StackTrace;
                 return false;
             }
             return true;
@@ -646,7 +811,8 @@ _exit:
         }
         private void RemoveWaterMarkThreadWork(object fileNameObj)
         {
-            //string fileName = @"E:\3Proj\16NS109\CPLD\pdf\try\电源DC-DC_01_12_07.pdf";
+            ClearWorkTemp(TEMP_SPLIT);
+            ClearWorkTemp(TEMP_PURE);
             Thread.Sleep(50);
 
             string fileName = fileNameObj.ToString();
@@ -668,7 +834,7 @@ _exit:
             GetPageRange(fileName, g_pageNumber, itext7.pageRange);
             AppendLog("step 1: search Wartermark");
             string[] textWarterMark = GetWarterMarkListFromUI();
-            List<WatermarkFound> watermarkFoundList = itext7.PdfSearchWartermark(fileName, textWarterMark, out msg);
+            List<WatermarkTextFound> watermarkFoundList = itext7.PdfSearchWartermarkText(fileName, textWarterMark, out msg);
             if (watermarkFoundList.Count == 0)
             {
                 if (cb_isText.Checked == true) { 
@@ -702,11 +868,8 @@ _exit:
             }
             AppendLog("step 5: add outline");
 
-            ClearWorkTemp(TEMP_SPLIT);
-            ClearWorkTemp(TEMP_PURE);
-            AppendLog("finished success");
-
             OpenPath(g_outputPdfFolder);
+            AppendLog("finished success");
         }
 
         private void ClearWorkTemp(string path)

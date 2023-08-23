@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace pdfRemoveWaterMark
 {
-    class WatermarkFound
+    class WatermarkTextFound
     {
         public List<Rectangle> warterMarkBounds;
         public int page;
 
-        public WatermarkFound(int page, List<Rectangle> warterMarkBounds)
+        public WatermarkTextFound(int page, List<Rectangle> warterMarkBounds)
         {
             this.page = page;
             this.warterMarkBounds = warterMarkBounds;

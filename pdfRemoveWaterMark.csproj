@@ -192,7 +192,7 @@
     <Compile Include="tools\IniHelper.cs" />
     <Compile Include="tools\InterfaceINI.cs" />
     <Compile Include="tools\ModifyLocalDateTime.cs" />
-    <Compile Include="WatermarkFound.cs" />
+    <Compile Include="WatermarkTextFound.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

@@ -23,7 +23,7 @@ namespace pdfRemoveWaterMark
 {
     class iText7
     {
-        public List<WatermarkFound> wartermarkFoundBounds = new List<WatermarkFound>();
+        public List<WatermarkTextFound> wartermarkFoundBounds = new List<WatermarkTextFound>();
         public delegate void AppendLog(string arg, bool isDisplayUI = true);
         public List<int> pageRange = new List<int>();
         private AppendLog appendLog;
@@ -69,7 +69,7 @@ namespace pdfRemoveWaterMark
         /// <summary>
         /// 如果文档大小在license限制条件中，则append 一个bmp
         /// </summary>
-        private void PdfSplitAppendObject(string filePath)
+        private void PdfSplitAppendObject(string filePath, System.Drawing.Point dumpImageCoordinate)
         {
             if (!File.Exists(filePath))
             {
@@ -111,7 +111,7 @@ namespace pdfRemoveWaterMark
                         // 创建 iText7 图片对象
                         Image img = new Image(imageData);
 
-                        canvas.AddImageAt(imageData, 100, 100,false);
+                        canvas.AddImageAt(imageData, dumpImageCoordinate.X, dumpImageCoordinate.Y, false);
                     }
                     // 关闭文档
                     pdfDocument.Close();
@@ -127,7 +127,6 @@ namespace pdfRemoveWaterMark
                 Console.WriteLine(ex.Message);
             }
         }
-
 
         public bool PdfSplit(string splitTempFolder, string oriFileName, out string msg)
         {
@@ -162,7 +161,7 @@ namespace pdfRemoveWaterMark
                     outputPdfDocument.Close();  // write file
                     pdfWriter.Close();
 
-                    PdfSplitAppendObject(outputPdfFilePath);
+                    PdfSplitAppendObject(outputPdfFilePath, MainForm.g_dumpImageCoordinate);
                 }
                 oriFileDoc.Close();
                 oriFilePdfReader.Close();
@@ -186,7 +185,7 @@ namespace pdfRemoveWaterMark
             document.Close();
             return pageNum;
         }
-        public List<WatermarkFound> PdfSearchWartermark(string fileName, string[] warterMark, out string msg)
+        public List<WatermarkTextFound> PdfSearchWartermarkText(string fileName, string[] warterMark, out string msg)
         {
             try
             {   
@@ -217,14 +216,14 @@ namespace pdfRemoveWaterMark
                         // 输出搜索到的文本及其位置信息
                         appendLog($"Found water text on page {pageNum}:{ Environment.NewLine}{string.Join(Environment.NewLine, warterMark)} { Environment.NewLine}", false);
                         List<Rectangle>  bounds = strategy.GetBoundingBoxList();
-                        WatermarkFound watermarkFound = new WatermarkFound(pageNum, bounds);
+                        WatermarkTextFound watermarkFound = new WatermarkTextFound(pageNum, bounds);
                         wartermarkFoundBounds.Add(watermarkFound);
                     }
                 }
             }
             catch (Exception ex)
             {
-                appendLog("PdfSearchWartermark" + ex.Message);
+                appendLog("PdfSearchWartermarkText" + ex.Message);
                 msg = ex.Message;
                 return null;
             }
