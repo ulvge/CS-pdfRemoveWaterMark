@@ -404,7 +404,7 @@ namespace pdfRemoveWaterMark
                             bool isFoundSame = false;
                             PdfPageObject foundObj = foundPageObj[found];
                             int j;
-                            for (j = 1; j <= pageObj.PageObjects.Count - 1; j++)
+                            for (j = 0; j <= pageObj.PageObjects.Count - 1; j++)
                             {
                                 if (!pageObj.PageObjects[j].ObjectType.Equals(foundObj.ObjectType))
                                 {
@@ -911,7 +911,7 @@ _exit:
             }
             catch (Exception ex)
             {
-                Console.WriteLine("ClearWorkTemp : " + path + ".error:"+ ex.Message);
+                AppendLog("ClearWorkTemp error : " + path + ".error:"+ ex.Message);
             }
         }
 
