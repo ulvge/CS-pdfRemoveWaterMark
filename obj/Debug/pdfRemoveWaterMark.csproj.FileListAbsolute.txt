@@ -1,0 +1,16 @@
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\obj\Debug\pdfRemoveWaterMark.csproj.AssemblyReference.cache
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\obj\Debug\pdfRemoveWaterMark.Form1.resources
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\obj\Debug\pdfRemoveWaterMark.Properties.Resources.resources
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\obj\Debug\pdfRemoveWaterMark.csproj.GenerateResource.cache
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\obj\Debug\pdfRemoveWaterMark.csproj.CoreCompileInputs.cache
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\bin\Debug\pdfRemoveWaterMark.exe.config
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\bin\Debug\pdfRemoveWaterMark.exe
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\bin\Debug\pdfRemoveWaterMark.pdb
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\obj\Debug\pdfRemoveWaterMark.exe
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\obj\Debug\pdfRemoveWaterMark.pdb
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\bin\Debug\Patagames.Pdf.dll
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\obj\Debug\pdfRemoveWaterMark.csproj.CopyComplete
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\bin\Debug\PdfiumViewer.dll
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\bin\Debug\PdfiumViewer.xml
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\bin\Debug\x86\pdfium.dll
+E:\3Proj\16NS109\CPLD\pdf\pdfRemoveWaterMark\pdfRemoveWaterMark\bin\Debug\x64\pdfium.dll
