@@ -32,15 +32,45 @@ namespace pdfRemoveWaterMark
             IniHelper iniHelper = new IniHelper();
             iniHelper.IniUpdate2File(this);
         }
+
+        private class ImageRectArea
+        {
+            public int w_min;
+            public int w_max;
+            public int h_min;
+            public int h_max;
+            public ImageRectArea(string w_min, string w_max, string h_min, string h_max)
+            {
+                this.w_min = ConvertString2Int(w_min);
+                this.w_max = ConvertString2Int(w_max) + 1;
+                this.h_min = ConvertString2Int(h_min);
+                this.h_max = ConvertString2Int(h_max) + 1;
+            }
+            private int ConvertString2Int(string strFloat)
+            {
+                try
+                {
+                    return int.Parse(strFloat);
+                }
+                catch (Exception)
+                {
+                    return 0;
+                }
+            }
+        }
         /// <summary>
         /// 根据 UI设定的 宽高范围，判断是否是指定查找的object
         /// </summary>
         /// <param name="objRect"></param>
         /// <returns></returns>
-        private bool isFilter(FS_RECTF objRect)
+        private bool IsMatch(FS_RECTF objRect, ImageRectArea imageRect)
         {
-            if ( (int.Parse(w_min.Text) <= objRect.Width) && (objRect.Width) >= int.Parse(w_max.Text) &&
-                (int.Parse(h_min.Text) <= objRect.Height) && (objRect.Height >= int.Parse(h_max.Text)) )
+            if (objRect.Width * objRect.Height <= 1)
+            {
+                return false;
+            }
+            if ((imageRect.w_min <= objRect.Width) && (objRect.Width <= imageRect.w_max) &&
+                (imageRect.h_min <= objRect.Height) && (objRect.Height <= imageRect.h_max) )
             {
                 return true;
             }
@@ -64,6 +94,7 @@ namespace pdfRemoveWaterMark
             string[] fileNameExt = name.Substring(name.LastIndexOf('\\') + 1).Split('.');
             string newName = path + fileNameExt[0] + "_" + DateTime.Now.ToString("yyyy_MM_dd-HHmmss") + "." + fileNameExt[1];
             PdfDocument document = PdfDocument.Load(name);
+            ImageRectArea imageRectArea = new ImageRectArea(w_min.Text, w_max.Text, h_min.Text, h_max.Text);
             for (int i = 0; i < document.Pages.Count; i++)
             {
                 PdfPage pageObj = document.Pages[i];
@@ -75,7 +106,7 @@ namespace pdfRemoveWaterMark
                 for (int j = pageObj.PageObjects.Count - 1; j >= 0; j--)
                 {
                     FS_RECTF rect = pageObj.PageObjects[j].BoundingBox;
-                    if (isFilter(rect))
+                    if (IsMatch(rect, imageRectArea))
                     {
                         removeCount++;
                         AppendLog(string.Format("pages: {0}, RemoveAt Ojbect: {1} , rect.w : {2}, rect.h : {3}", i, j, rect.Width, rect.Height));
@@ -88,6 +119,8 @@ namespace pdfRemoveWaterMark
                 }
                 pageObj.GenerateContent();
             }
+
+            Console.WriteLine("newName: " + newName);
             document.WriteBlock += (s, ex) => {
                 using (var stream = new FileStream(newName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
