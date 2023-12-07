@@ -164,18 +164,23 @@ namespace pdfRemoveWaterMark
                     {
                         FS_RECTF rect = pageObj.PageObjects[j].BoundingBox;
                         PointF outTolerance = new PointF(0, 0);
-                        if (IsMatchTextRect(rect, targetWatermarkFound, out outTolerance, 50, 0.1f))
+                        if (cb_isText.Checked && IsMatchTextRect(rect, targetWatermarkFound, out outTolerance, 50, 0.1f))
                         {
                             removeCount++;
                             AppendLog($"\tpages: {pageNum} text , Remove At Ojbect: {j} , search rect.w h : {(int)rect.Width}, {(int)rect.Height}" +
                                 $", outTolerance:{ outTolerance.X },{ outTolerance.Y }");
                             pageObj.PageObjects.RemoveAt(j);
                         }
-                        else if (IsMatchImageRect(rect, imageRectArea))
+                        else if (cb_isImage.Checked && IsMatchImageRect(rect, imageRectArea))
                         {
                             removeCount++;
                             AppendLog($"\tpages: {pageNum} image , Remove At Ojbect: {j} , search rect.w h : {(int)rect.Width}, {(int)rect.Height}");
                             pageObj.PageObjects.RemoveAt(j);
+                        }
+                        else
+                        {
+                            msg = "请选择水印的类型，文本或图片，至少选择一种";
+                            return false;
                         }
                     }
                     if (removeCount == 0)
@@ -197,10 +202,10 @@ namespace pdfRemoveWaterMark
                     document.Dispose();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                msg = ex.Message;
+                return false;
             }
             return true;
         }
@@ -211,7 +216,7 @@ namespace pdfRemoveWaterMark
         /// <param oriFileName="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-            CreateBackgroundThread(string.Empty);
+            CreateBackgroundThreadWork(tb_fileRoot.Text);
             return;
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Multiselect = false;
@@ -223,29 +228,32 @@ namespace pdfRemoveWaterMark
                 tb_fileRoot.Text = fileDialog.FileName;
                 if (tb_fileRoot.Text.EndsWith(".pdf"))
                 {
-                    CreateBackgroundThread(tb_fileRoot.Text);
-                    // 创建一个新线程
-                    Thread thread = new Thread(new ParameterizedThreadStart(CreateBackgroundThread));
-                    thread.Start(tb_fileRoot.Text);
+                    CreateBackgroundThreadWork(tb_fileRoot.Text);
                 }
             }
         }
 
-
-        private void CreateBackgroundThread(object fileName)
+        private void CreateBackgroundThreadWork(string fileName)
         {
-            fileName = @"E:\3Proj\16NS109\CPLD\pdf\try\电源DC-DC_01_12_07.pdf";
+            // 创建一个新线程
+            Thread thread = new Thread(new ParameterizedThreadStart(mainWork));
+            thread.Start(fileName);
+        }
+        private void mainWork(object fileNameObj)
+        {
+            string fileName = @"E:\3Proj\16NS109\CPLD\pdf\try\电源DC-DC_01_12_07.pdf";
+            //string fileName = fileNameObj.ToString();
             Pdfium pdfium = new Pdfium(AppendLog);
             string msg;
             AppendLog("step 1: search Wartermark");
-            List<WatermarkFound> watermarkFoundList = pdfium.PdfiumSearchWartermark((string)fileName, out msg);
+            List<WatermarkFound> watermarkFoundList = pdfium.PdfiumSearchWartermark(fileName, out msg);
             if (watermarkFoundList == null)
             {
                 AppendLog(msg);
                 return;
             }
             AppendLog("step 2: split");
-            if (pdfium.PdfiumSplit(g_splitTempFolder, (string)fileName, out msg) == false)
+            if (pdfium.PdfiumSplit(g_splitTempFolder, fileName, out msg) == false)
             {
                 AppendLog(msg);
                 return;
@@ -257,8 +265,8 @@ namespace pdfRemoveWaterMark
                 return;
             }
             AppendLog("step 4: merge");
-            string directory = Path.GetDirectoryName((string)fileName);
-            if (pdfium.PdfiumMerge(g_removedTempFolder, directory, (string)fileName, out msg) == false)
+            string directory = Path.GetDirectoryName(fileName);
+            if (pdfium.PdfiumMerge(g_removedTempFolder, directory, fileName, out msg) == false)
             {
                 AppendLog(msg);
                 return;
@@ -266,6 +274,24 @@ namespace pdfRemoveWaterMark
             AppendLog("step 4: merge");
 
             
+        }
+
+        /// <summary>
+        /// DragEnter事件中将拖动源中的数据链接到放置目标。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+
+        private void tb_fileRoot_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.All;
+            else e.Effect = DragDropEffects.None;
+        }
+        private void tb_fileRoot_DragDrop(object sender, DragEventArgs e)
+        {
+            //获取第一个文件名
+            string fileName = (e.Data.GetData(DataFormats.FileDrop, false) as String[])[0];
+            CreateBackgroundThreadWork(fileName);
         }
     }
 }

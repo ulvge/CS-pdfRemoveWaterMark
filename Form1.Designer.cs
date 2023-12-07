@@ -34,7 +34,9 @@ namespace pdfRemoveWaterMark
             this.button1 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cb_isText = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.cb_isImage = new System.Windows.Forms.CheckBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -53,11 +55,14 @@ namespace pdfRemoveWaterMark
             // 
             // tb_fileRoot
             // 
+            this.tb_fileRoot.AllowDrop = true;
             this.tb_fileRoot.Location = new System.Drawing.Point(130, 22);
             this.tb_fileRoot.Margin = new System.Windows.Forms.Padding(4);
             this.tb_fileRoot.Name = "tb_fileRoot";
             this.tb_fileRoot.Size = new System.Drawing.Size(290, 25);
             this.tb_fileRoot.TabIndex = 5;
+            this.tb_fileRoot.DragDrop += new System.Windows.Forms.DragEventHandler(this.tb_fileRoot_DragDrop);
+            this.tb_fileRoot.DragEnter += new System.Windows.Forms.DragEventHandler(this.tb_fileRoot_DragEnter);
             // 
             // label1
             // 
@@ -91,16 +96,27 @@ namespace pdfRemoveWaterMark
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.cb_isText);
             this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Location = new System.Drawing.Point(34, 96);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(397, 100);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "水印是文本";
+            // 
+            // cb_isText
+            // 
+            this.cb_isText.AutoSize = true;
+            this.cb_isText.Location = new System.Drawing.Point(6, 0);
+            this.cb_isText.Name = "cb_isText";
+            this.cb_isText.Size = new System.Drawing.Size(104, 19);
+            this.cb_isText.TabIndex = 6;
+            this.cb_isText.Text = "水印是文本";
+            this.cb_isText.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.cb_isImage);
             this.groupBox2.Controls.Add(this.textBox2);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.label3);
@@ -115,7 +131,16 @@ namespace pdfRemoveWaterMark
             this.groupBox2.Size = new System.Drawing.Size(456, 166);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "水印是图片";
+            // 
+            // cb_isImage
+            // 
+            this.cb_isImage.AutoSize = true;
+            this.cb_isImage.Location = new System.Drawing.Point(6, -1);
+            this.cb_isImage.Name = "cb_isImage";
+            this.cb_isImage.Size = new System.Drawing.Size(104, 19);
+            this.cb_isImage.TabIndex = 6;
+            this.cb_isImage.Text = "水印是图片";
+            this.cb_isImage.UseVisualStyleBackColor = true;
             // 
             // textBox2
             // 
@@ -269,6 +294,8 @@ namespace pdfRemoveWaterMark
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox tb_log;
         private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.CheckBox cb_isText;
+        private System.Windows.Forms.CheckBox cb_isImage;
     }
 }
 
