@@ -1,0 +1,8 @@
+﻿Beta notice
+Pdfium.Net SDK for Universal Windows Platform is released in what's called "beta" or "release candidate" form.  This means that we believe it is ready for public use ...but... may still contain some [hopefully only minor] bugs.  We believe getting the software into the users' hands sooner means they can tell us when we're being dumb and ideally what to change to be better!  This means everyone gets better software and we're kind'a 'unreasonable' about trying to improve users' experience of software :-)
+
+This process -- known as "release early, release often" -- is part of our agile development approach.
+
+The compliment of giving you earlier access to the library is that you won't be surprised (and won't sue us) if it doesn't yet perform as you (or even we) hoped.  We follow industry best-practice to produce the best quality product for our users because we care -- however we're humans too and as failible as anyone.
+
+Once Pdfium.Net SDK for UWP has had several iterations (updates) of beta release, we'll consider it finished, snip the beta ribbon from it and smash a bottle of champaign against it.  Be assured: we'll continue updating if and when any sneakily lingering bugs are found.

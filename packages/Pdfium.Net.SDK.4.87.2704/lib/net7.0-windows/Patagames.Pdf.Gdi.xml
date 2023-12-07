@@ -1,0 +1,205 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Patagames.Pdf.Gdi</name>
+    </assembly>
+    <members>
+        <member name="T:Patagames.Pdf.Net.PdfBitmapExtension">
+            <summary>
+            Define extension methods for <see cref="T:Patagames.Pdf.Net.PdfBitmap"/> class.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfBitmapExtension.GetImage(Patagames.Pdf.Net.PdfBitmap)">
+            <summary>
+            Gets the image that represents the PdfBitmap
+            </summary>
+            <param name="bitmap">The <see cref="T:System.Drawing.Bitmap"/> which is used to create <see cref="T:Patagames.Pdf.Net.PdfBitmap"/>.</param>
+            <returns>The <see cref="T:System.Drawing.Bitmap"/> that represents the PdfBitmap.</returns>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfBitmapExtension.FromFile(System.String)">
+            <summary>
+            Creates an <see cref="T:Patagames.Pdf.Net.PdfBitmap"/> from the specified file.
+            </summary>
+            <param name="path">A string that contains the name of the file from which to create the <see cref="T:Patagames.Pdf.Net.PdfBitmap"/>.</param>
+            <returns>The <see cref="T:Patagames.Pdf.Net.PdfBitmap"/> this method creates.</returns>
+            <exception cref="T:System.OutOfMemoryException">The file does not have a valid image format. -or- GDI+ does not support the pixel format of the file.</exception>
+            <exception cref="T:System.IO.FileNotFoundException">The specified file does not exist.</exception>
+            <exception cref="T:System.ArgumentException">Filename is a System.Uri.</exception>
+            <exception cref="T:Patagames.Pdf.Net.Exceptions.UnsupportedImageFormatException">Can't convert System.Drawing.Bitmap to PdfBitmap</exception>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfBitmapExtension.FromBitmap(System.Drawing.Bitmap)">
+            <summary>
+            Creates an <see cref="T:Patagames.Pdf.Net.PdfBitmap"/> from the specified <paramref name="image"/>.
+            </summary>
+            <param name="image">System.Drawing.Bitmap</param>
+            <returns>The <see cref="T:Patagames.Pdf.Net.PdfBitmap"/> this method creates.</returns>
+            <exception cref="T:System.OutOfMemoryException">The file does not have a valid image format. -or- GDI+ does not support the pixel format of the file.</exception>
+            <exception cref="T:System.IO.FileNotFoundException">The specified file does not exist.</exception>
+            <exception cref="T:System.ArgumentException">Filename is a System.Uri.</exception>
+            <exception cref="T:Patagames.Pdf.Net.Exceptions.UnsupportedImageFormatException">Can't convert System.Drawing.Bitmap to PdfBitmap</exception>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfBitmapExtension.FillRect(Patagames.Pdf.Net.PdfBitmap,System.Drawing.Rectangle,Patagames.Pdf.FS_COLOR)">
+            <summary>
+            Fill a rectangle area in an PdfBitmap specified by a <see cref="T:System.Drawing.Rectangle"/> structure.
+            </summary>
+            <param name="bitmap">The <see cref="T:Patagames.Pdf.Net.PdfBitmap"/>.</param>
+            <param name="rect">A <see cref="T:System.Drawing.Rectangle"/> structure that represents the rectangle to fill.</param>
+            <param name="color">A <see cref="T:Patagames.Pdf.FS_COLOR"/> structure that represents the color.</param>
+            <remarks><para>This method set the color and (optionally) alpha value in specified region of the bitmap.</para>
+            <note>
+            If alpha channel is used, this function does NOT composite the background with the source
+            color, instead the background will be replaced by the source color and alpha.</note>
+            <para>If alpha channel is not used, the "alpha" parameter is ignored.</para>
+            </remarks>
+        </member>
+        <member name="T:Patagames.Pdf.Net.PdfFontExtension">
+            <summary>
+            Define extension methods for <see cref="T:Patagames.Pdf.Net.PdfFont"/> class.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfFontExtension.GetCharBBoxEx(Patagames.Pdf.Net.PdfFont,System.Int32)">
+            <summary>
+            Get the special character bounding box of a font object.
+            </summary>
+            <param name="font">The instance of the <see cref="T:Patagames.Pdf.Net.PdfFont"/> class.</param>
+            <param name="charCode">The character code.</param>
+            <returns>Character bounding box of a font object</returns>
+        </member>
+        <member name="T:Patagames.Pdf.Net.PdfPageExtension">
+            <summary>
+            Define extension methods for <see cref="T:Patagames.Pdf.Net.PdfPage"/> class.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageExtension.Render(Patagames.Pdf.Net.PdfPage,System.Drawing.Graphics,System.Int32,System.Int32,System.Int32,System.Int32,Patagames.Pdf.Enums.PageRotate,Patagames.Pdf.Enums.RenderFlags)">
+            <summary>
+            Render contents in a page to a drawing surface specified by a coordinate pair, a width, and a height.
+            </summary>
+            <param name="page">The page to render.</param>
+            <param name="graphics">GDI+ drawing surface</param>
+            <param name="x">Left pixel position of the display area in the device coordinate</param>
+            <param name="y">Top pixel position of the display area in the device coordinate.</param>
+            <param name="width">Horizontal size (in pixels) for displaying the page</param>
+            <param name="height">Vertical size (in pixels) for displaying the page.</param>
+            <param name="rotate">Page orientation. <see cref="T:Patagames.Pdf.Enums.PageRotate"/> for details.</param>
+            <param name="flags">RenderFlags.None for normal display, or combination of <see cref="T:Patagames.Pdf.Enums.RenderFlags"/></param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageExtension.Render(Patagames.Pdf.Net.PdfPage,System.Drawing.Graphics,System.Drawing.Point,System.Drawing.Size,Patagames.Pdf.Enums.PageRotate,Patagames.Pdf.Enums.RenderFlags)">
+            <summary>
+            Render contents in a page to a drawing surface specified by a location and size.
+            </summary>
+            <param name="page">The page to render.</param>
+            <param name="graphics">GDI+ drawing surface</param>
+            <param name="location">A <see cref="T:System.Drawing.Point"/> structure that represents the Top-Left corner of the display area in the device coordinate.</param>
+            <param name="size">A <see cref="T:System.Drawing.Size"/> structure that represents the horizontal and vertical size (in pixels) for displaying the page.</param>
+            <param name="rotate">Page orientation. <see cref="T:Patagames.Pdf.Enums.PageRotate"/> for details.</param>
+            <param name="flags">RenderFlags.None for normal display, or combination of <see cref="T:Patagames.Pdf.Enums.RenderFlags"/></param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageExtension.Render(Patagames.Pdf.Net.PdfPage,System.Drawing.Graphics,System.Drawing.Rectangle,Patagames.Pdf.Enums.PageRotate,Patagames.Pdf.Enums.RenderFlags)">
+            <summary>
+            Render contents in a page to a drawing surface specified by a <see cref="T:System.Drawing.Rectangle"/> structure.
+            </summary>
+            <param name="page">The page to render.</param>
+            <param name="graphics">GDI+ drawing surface</param>
+            <param name="rect">A <see cref="T:System.Drawing.Rectangle"/> structure that represents the rectangle in the device coordinate. </param>
+            <param name="rotate">Page orientation. <see cref="T:Patagames.Pdf.Enums.PageRotate"/> for details.</param>
+            <param name="flags">RenderFlags.None for normal display, or combination of <see cref="T:Patagames.Pdf.Enums.RenderFlags"/></param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageExtension.Render(Patagames.Pdf.Net.PdfPage,System.IntPtr,System.Drawing.Point,System.Drawing.Size,Patagames.Pdf.Enums.PageRotate,Patagames.Pdf.Enums.RenderFlags)">
+            <summary>
+            Render contents in a page to the device context specified by a location and size.
+            </summary>
+            <param name="page">The page to render.</param>
+            <param name="hdc">Device context</param>
+            <param name="location">A <see cref="T:System.Drawing.Point"/> structure that represents the Top-Left corner of the display area in the device coordinate.</param>
+            <param name="size">A <see cref="T:System.Drawing.Size"/> structure that represents the horizontal and vertical size (in pixels) for displaying the page.</param>
+            <param name="rotate">Page orientation. <see cref="T:Patagames.Pdf.Enums.PageRotate"/> for details.</param>
+            <param name="flags">RenderFlags.None for normal display, or combination of <see cref="T:Patagames.Pdf.Enums.RenderFlags"/></param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageExtension.Render(Patagames.Pdf.Net.PdfPage,System.IntPtr,System.Drawing.Rectangle,Patagames.Pdf.Enums.PageRotate,Patagames.Pdf.Enums.RenderFlags)">
+            <summary>
+            Render contents in a page to the device context specified by a <see cref="T:System.Drawing.Rectangle"/> structure.
+            </summary>
+            <param name="page">The page to render.</param>
+            <param name="hdc">Device context</param>
+            <param name="rect">A <see cref="T:System.Drawing.Rectangle"/> structure that represents the rectangle in the device coordinate. </param>
+            <param name="rotate">Page orientation. <see cref="T:Patagames.Pdf.Enums.PageRotate"/> for details.</param>
+            <param name="flags">RenderFlags.None for normal display, or combination of <see cref="T:Patagames.Pdf.Enums.RenderFlags"/></param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageExtension.StartProgressiveRender(Patagames.Pdf.Net.PdfPage,Patagames.Pdf.Net.PdfBitmap,System.Drawing.Point,System.Drawing.Size,Patagames.Pdf.Enums.PageRotate,Patagames.Pdf.Enums.RenderFlags,System.Byte[])">
+            <summary>
+            Start to render page contents to a device independent bitmap progressively specified by a location and size.
+            </summary>
+            <param name="page">The page to render.</param>
+            <param name="bitmap">Instance of <see cref="T:Patagames.Pdf.Net.PdfBitmap"/> class.</param>
+            <param name="location">A <see cref="T:System.Drawing.Point"/> structure that represents the Top-Left corner of the display area in the bitmap coordinate.</param>
+            <param name="size">A <see cref="T:System.Drawing.Size"/> structure that represents the horizontal and vertical size (in pixels) for displaying the page.</param>
+            <param name="rotate">Page orientation: 0 (normal), 1 (rotated 90 degrees clockwise), 2 (rotated 180 degrees), 3 (rotated 90 degrees counter-clockwise).</param>
+            <param name="flags">0 for normal display, or combination of flags defined above.</param>
+            <param name="userData">A user defined data pointer, used by user's application. Can be NULL.</param>
+            <returns>Rendering Status. See <see cref="T:Patagames.Pdf.Enums.ProgressiveRenderingStatuses"/> for the details.</returns>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageExtension.StartProgressiveRender(Patagames.Pdf.Net.PdfPage,Patagames.Pdf.Net.PdfBitmap,System.Drawing.Rectangle,Patagames.Pdf.Enums.PageRotate,Patagames.Pdf.Enums.RenderFlags,System.Byte[])">
+            <summary>
+            Start to render page contents to a device independent bitmap progressively specified by a <see cref="T:System.Drawing.Rectangle"/> structure.
+            </summary>
+            <param name="page">The page to render.</param>
+            <param name="bitmap">Instance of <see cref="T:Patagames.Pdf.Net.PdfBitmap"/> class.</param>
+            <param name="rect">A <see cref="T:System.Drawing.Rectangle"/> structure that represents the rectangle in the device coordinate. </param>
+            <param name="rotate">Page orientation: 0 (normal), 1 (rotated 90 degrees clockwise), 2 (rotated 180 degrees), 3 (rotated 90 degrees counter-clockwise).</param>
+            <param name="flags">0 for normal display, or combination of flags defined above.</param>
+            <param name="userData">A user defined data pointer, used by user's application. Can be NULL.</param>
+            <returns>Rendering Status. See <see cref="T:Patagames.Pdf.Enums.ProgressiveRenderingStatuses"/> for the details.</returns>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageExtension.Render(Patagames.Pdf.Net.PdfPage,Patagames.Pdf.Net.PdfBitmap,System.Drawing.Point,System.Drawing.Size,Patagames.Pdf.Enums.PageRotate,Patagames.Pdf.Enums.RenderFlags)">
+            <summary>
+            Render contents in a page to a device-independent bitmap specified by a location and size.
+            </summary>
+            <param name="page">The page to render.</param>
+            <param name="bitmap">Instance of <see cref="T:Patagames.Pdf.Net.PdfBitmap"/> class.</param>
+            <param name="location">A <see cref="T:System.Drawing.Point"/> structure that represents the Top-Left corner of the display area in the bitmap coordinate.</param>
+            <param name="size">A <see cref="T:System.Drawing.Size"/> structure that represents the horizontal and vertical size (in pixels) for displaying the page.</param>
+            <param name="rotate">Page orientation. See <see cref="T:Patagames.Pdf.Enums.PageRotate"/> for details.</param>
+            <param name="flags">RenderFlags.None for normal display, or combination of <see cref="T:Patagames.Pdf.Enums.RenderFlags"/></param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageExtension.Render(Patagames.Pdf.Net.PdfPage,Patagames.Pdf.Net.PdfBitmap,System.Drawing.Rectangle,Patagames.Pdf.Enums.PageRotate,Patagames.Pdf.Enums.RenderFlags)">
+            <summary>
+            Render contents in a page to a device-independent bitmap specified by a <see cref="T:System.Drawing.Rectangle"/> structure.
+            </summary>
+            <param name="page">The page to render.</param>
+            <param name="bitmap">Instance of <see cref="T:Patagames.Pdf.Net.PdfBitmap"/> class.</param>
+            <param name="rect">A <see cref="T:System.Drawing.Rectangle"/> structure that represents the rectangle in the device coordinate. </param>
+            <param name="rotate">Page orientation. See <see cref="T:Patagames.Pdf.Enums.PageRotate"/> for details.</param>
+            <param name="flags">RenderFlags.None for normal display, or combination of <see cref="T:Patagames.Pdf.Enums.RenderFlags"/></param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageExtension.DeviceToPageEx(Patagames.Pdf.Net.PdfPage,System.Int32,System.Int32,System.Int32,System.Int32,Patagames.Pdf.Enums.PageRotate,System.Int32,System.Int32)">
+            <summary>
+            Convert the screen coordinate of a point to page coordinate.
+            </summary>
+            <param name="page">The page to calculate.</param>
+            <param name="x">Left pixel position of the display area in the device coordinate</param>
+            <param name="y">Top pixel position of the display area in the device coordinate</param>
+            <param name="width">Horizontal size (in pixels) for displaying the page</param>
+            <param name="height">Vertical size (in pixels) for displaying the page</param>
+            <param name="rotate">Page orientation: 0 (normal), 1 (rotated 90 degrees clockwise),2 (rotated 180 degrees), 3 (rotated 90 degrees counter-clockwise).</param>
+            <param name="deviceX">X value in device coordinate, for the point to be converted</param>
+            <param name="deviceY">Y value in device coordinate, for the point to be converted</param>
+            <returns><see cref="T:System.Drawing.PointF"/> structure that represents the point in page coordinate</returns>
+            <remarks>See remarks of <see cref="M:Patagames.Pdf.Net.PdfPage.DeviceToPage(System.Int32,System.Int32,System.Int32,System.Int32,Patagames.Pdf.Enums.PageRotate,System.Int32,System.Int32)"/> function</remarks>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageExtension.PageToDeviceEx(Patagames.Pdf.Net.PdfPage,System.Int32,System.Int32,System.Int32,System.Int32,Patagames.Pdf.Enums.PageRotate,System.Single,System.Single)">
+            <summary>
+            Convert the page coordinate of a point to screen coordinate
+            </summary>
+            <param name="page">The page to calculate.</param>
+            <param name="x">Left pixel position of the display area in the device coordinate</param>
+            <param name="y">Top pixel position of the display area in the device coordinate</param>
+            <param name="width">Horizontal size (in pixels) for displaying the page</param>
+            <param name="height">Vertical size (in pixels) for displaying the page</param>
+            <param name="rotate">Page orientation: 0 (normal), 1 (rotated 90 degrees clockwise),2 (rotated 180 degrees), 3 (rotated 90 degrees counter-clockwise).</param>
+            <param name="pageX">X value in page coordinate, for the point to be converted</param>
+            <param name="pageY">Y value in page coordinate, for the point to be converted</param>
+            <returns><see cref="T:System.Drawing.Point"/> structure that represents the point in device coordinate</returns>
+            <remarks>See remarks of <see cref="M:Patagames.Pdf.Net.PdfPage.DeviceToPage(System.Int32,System.Int32,System.Int32,System.Int32,Patagames.Pdf.Enums.PageRotate,System.Int32,System.Int32)"/> function</remarks>
+        </member>
+    </members>
+</doc>

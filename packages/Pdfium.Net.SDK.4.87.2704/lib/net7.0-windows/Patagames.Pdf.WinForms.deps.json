@@ -1,0 +1,99 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v7.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v7.0": {
+      "Patagames.Pdf.WinForms/1.0.0": {
+        "dependencies": {
+          "Patagames.Pdf": "1.0.0",
+          "Patagames.Pdf.Gdi": "1.0.0",
+          "Patagames.Pdf.Reference": "11.79.45.70",
+          "Patagames.Pdf.Gdi.Reference": "1.0.0.70"
+        },
+        "runtime": {
+          "Patagames.Pdf.WinForms.dll": {}
+        }
+      },
+      "Microsoft.Win32.SystemEvents/7.0.0": {},
+      "System.Drawing.Common/7.0.0": {
+        "dependencies": {
+          "Microsoft.Win32.SystemEvents": "7.0.0"
+        }
+      },
+      "Patagames.Pdf/1.0.0": {
+        "runtime": {
+          "Patagames.Pdf.dll": {}
+        }
+      },
+      "Patagames.Pdf.Gdi/1.0.0": {
+        "dependencies": {
+          "Patagames.Pdf": "1.0.0",
+          "System.Drawing.Common": "7.0.0"
+        },
+        "runtime": {
+          "Patagames.Pdf.Gdi.dll": {}
+        }
+      },
+      "Patagames.Pdf.Reference/11.79.45.70": {
+        "runtime": {
+          "Patagames.Pdf.dll": {
+            "assemblyVersion": "11.79.45.70",
+            "fileVersion": "11.79.45.70"
+          }
+        }
+      },
+      "Patagames.Pdf.Gdi.Reference/1.0.0.70": {
+        "runtime": {
+          "Patagames.Pdf.Gdi.dll": {
+            "assemblyVersion": "1.0.0.70",
+            "fileVersion": "1.0.0.70"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Patagames.Pdf.WinForms/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.Win32.SystemEvents/7.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-2nXPrhdAyAzir0gLl8Yy8S5Mnm/uBSQQA7jEsILOS1MTyS7DbmV1NgViMtvV1sfCD1ebITpNwb1NIinKeJgUVQ==",
+      "path": "microsoft.win32.systemevents/7.0.0",
+      "hashPath": "microsoft.win32.systemevents.7.0.0.nupkg.sha512"
+    },
+    "System.Drawing.Common/7.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KIX+oBU38pxkKPxvLcLfIkOV5Ien8ReN78wro7OF5/erwcmortzeFx+iBswlh2Vz6gVne0khocQudGwaO1Ey6A==",
+      "path": "system.drawing.common/7.0.0",
+      "hashPath": "system.drawing.common.7.0.0.nupkg.sha512"
+    },
+    "Patagames.Pdf/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Patagames.Pdf.Gdi/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Patagames.Pdf.Reference/11.79.45.70": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Patagames.Pdf.Gdi.Reference/1.0.0.70": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

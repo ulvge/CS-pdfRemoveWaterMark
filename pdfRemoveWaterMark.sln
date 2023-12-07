@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33801.447
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pdfRemoveWaterMark", "pdfRemoveWaterMark.csproj", "{E6EFDBF0-D82F-49A7-B19D-EBB65A812D4D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E6EFDBF0-D82F-49A7-B19D-EBB65A812D4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6EFDBF0-D82F-49A7-B19D-EBB65A812D4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6EFDBF0-D82F-49A7-B19D-EBB65A812D4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6EFDBF0-D82F-49A7-B19D-EBB65A812D4D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {093396FB-B7DE-4850-B037-937ED77DD04E}
+	EndGlobalSection
+EndGlobal
