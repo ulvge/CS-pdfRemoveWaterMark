@@ -15,7 +15,7 @@ namespace pdfRemoveWaterMark
     class PdfiumSplitSearch
     {
         public List<WatermarkFound> wartermarkFoundBounds = new List<WatermarkFound>();
-        public delegate void AppendLog(string arg);
+        public delegate void AppendLog(string arg, bool isDisplayUI = true);
         public string outputPdfFolder;
         private AppendLog appendLog;
 
@@ -47,7 +47,7 @@ namespace pdfRemoveWaterMark
                         // 复制当前页到输出文档
                         document.CopyPagesTo(pageNum, pageNum, outputPdfDocument);
                     }
-                    appendLog($"Page {pageNum} saved to: {outputPdfFilePath}");
+                    appendLog($"Page {pageNum} saved to: {outputPdfFilePath}", false);
                 }
                 document.Close();
                 reader.Close();
@@ -85,7 +85,7 @@ namespace pdfRemoveWaterMark
                     if (strategy.isFound)
                     {
                         // 输出搜索到的文本及其位置信息
-                        appendLog($"Found water text on page {pageNum}:{ Environment.NewLine}{string.Join(Environment.NewLine, warterMark)} { Environment.NewLine}");
+                        appendLog($"Found water text on page {pageNum}:{ Environment.NewLine}{string.Join(Environment.NewLine, warterMark)} { Environment.NewLine}", false);
                         List<Rectangle>  bounds = strategy.GetBoundingBoxList();
                         WatermarkFound watermarkFound = new WatermarkFound(pageNum, bounds);
                         wartermarkFoundBounds.Add(watermarkFound);
