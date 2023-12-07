@@ -16,7 +16,7 @@ namespace pdfRemoveWaterMark
     {
         public List<WatermarkFound> wartermarkFoundBounds = new List<WatermarkFound>();
         public delegate void AppendLog(string arg);
-        private string outputPdfFolder = "pdfSplit";
+        public static string outputPdfFolder = "pdfSplit";
         private AppendLog appendLog;
 
         public PdfiumSplitSearch(AppendLog appendLog)
@@ -30,6 +30,10 @@ namespace pdfRemoveWaterMark
                 msg = string.Empty;
                 PdfReader reader = new PdfReader(fileName);
                 PdfDocument document = new PdfDocument(reader);
+                if (!Directory.Exists(outputPdfFolder))
+                {
+                    Directory.CreateDirectory(outputPdfFolder);
+                }
 
                 for (int pageNum = 1; pageNum <= document.GetNumberOfPages(); pageNum++)
                 {
@@ -37,13 +41,10 @@ namespace pdfRemoveWaterMark
 
                     // 创建输出PDF文档
                     string outputPdfFilePath = System.IO.Path.Combine(outputPdfFolder, $"{pageNum}.pdf");
-                    using (PdfWriter pdfWriter = new PdfWriter(outputPdfFilePath))
+                    using (PdfDocument outputPdfDocument = new PdfDocument(new PdfWriter(outputPdfFilePath)))
                     {
-                        using (PdfDocument outputPdfDocument = new PdfDocument(pdfWriter))
-                        {
-                            // 复制当前页到输出文档
-                            document.CopyPagesTo(pageNum, pageNum, outputPdfDocument);
-                        }
+                        // 复制当前页到输出文档
+                        document.CopyPagesTo(pageNum, pageNum, outputPdfDocument);
                     }
                     appendLog($"Page {pageNum} saved to: {outputPdfFilePath}");
                 }
