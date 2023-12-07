@@ -3,6 +3,7 @@ using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Data;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
+using iText.Kernel.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,28 +13,26 @@ using System.Threading.Tasks;
 
 namespace pdfRemoveWaterMark
 {
-    class PdfiumSplitSearch
+    class Pdfium
     {
         public List<WatermarkFound> wartermarkFoundBounds = new List<WatermarkFound>();
         public delegate void AppendLog(string arg, bool isDisplayUI = true);
-        public string outputPdfFolder;
         private AppendLog appendLog;
 
-        public PdfiumSplitSearch(string splitTempFolder, AppendLog appendLog)
+        public Pdfium(AppendLog appendLog)
         {
             this.appendLog = appendLog;
-            this.outputPdfFolder = splitTempFolder;
         }
-        public bool PdfiumSplit(string fileName, out string msg)
+        public bool PdfiumSplit(string splitTempFolder, string fileName, out string msg)
         {
             try
             {
                 msg = string.Empty;
                 PdfReader reader = new PdfReader(fileName);
                 PdfDocument document = new PdfDocument(reader);
-                if (!Directory.Exists(outputPdfFolder))
+                if (!Directory.Exists(splitTempFolder))
                 {
-                    Directory.CreateDirectory(outputPdfFolder);
+                    Directory.CreateDirectory(splitTempFolder);
                 }
 
                 for (int pageNum = 1; pageNum <= document.GetNumberOfPages(); pageNum++)
@@ -41,7 +40,7 @@ namespace pdfRemoveWaterMark
                     PdfPage page = document.GetPage(pageNum);
 
                     // 创建输出PDF文档
-                    string outputPdfFilePath = System.IO.Path.Combine(outputPdfFolder, $"{pageNum}.pdf");
+                    string outputPdfFilePath = System.IO.Path.Combine(splitTempFolder, $"{pageNum}.pdf");
                     using (PdfDocument outputPdfDocument = new PdfDocument(new PdfWriter(outputPdfFilePath)))
                     {
                         // 复制当前页到输出文档
@@ -102,7 +101,6 @@ namespace pdfRemoveWaterMark
             return wartermarkFoundBounds;
         }
 
-
         class CustomTextExtractionStrategy : LocationTextExtractionStrategy
         {
             private readonly string[] searchTextList;
@@ -160,5 +158,35 @@ namespace pdfRemoveWaterMark
                 return new iText.Kernel.Geom.Rectangle(renderInfo.GetDescentLine().GetBoundingRectangle());
             }
         }
+
+        public bool PdfiumMerge(string removedWarterMarkFolder, string outputPdfFolder, string oriFileName, out string msg)
+        {
+            msg = string.Empty;
+            if (!Directory.Exists(removedWarterMarkFolder))
+            {
+                return false;
+            }
+            if (!Directory.Exists(outputPdfFolder))
+            {
+                Directory.CreateDirectory(outputPdfFolder);
+            }
+            string oriFileNameOnly = System.IO.Path.GetFileNameWithoutExtension(oriFileName);
+            string outputFileName = System.IO.Path.Combine(outputPdfFolder, $"{oriFileNameOnly}_{DateTime.Now.ToString("yyyy_MM_dd-HHmmss")}.pdf");
+            PdfDocument pdfDocSave = new PdfDocument(new PdfWriter(outputFileName));
+            PdfMerger merger = new PdfMerger(pdfDocSave).SetCloseSourceDocuments(true);
+            PdfDocument oriFileDocument = new PdfDocument(new PdfReader(oriFileName));
+            for (int pageNum = 1; pageNum <= oriFileDocument.GetNumberOfPages(); pageNum++)
+            {
+                string onePageFilePath = System.IO.Path.Combine(removedWarterMarkFolder, $"{pageNum}.pdf");
+                PdfDocument onePageDoc = new PdfDocument(new PdfReader(onePageFilePath));
+
+                merger.Merge(onePageDoc, 1, 1);
+            }
+            oriFileDocument.Close();
+            pdfDocSave.Close();
+
+            return true;
+        }
+
     }
 }

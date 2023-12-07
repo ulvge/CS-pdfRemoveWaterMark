@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -223,24 +224,28 @@ namespace pdfRemoveWaterMark
                 if (tb_fileRoot.Text.EndsWith(".pdf"))
                 {
                     CreateBackgroundThread(tb_fileRoot.Text);
+                    // 创建一个新线程
+                    Thread thread = new Thread(new ParameterizedThreadStart(CreateBackgroundThread));
+                    thread.Start(tb_fileRoot.Text);
                 }
             }
         }
 
-        private void CreateBackgroundThread(string fileName)
+
+        private void CreateBackgroundThread(object fileName)
         {
             fileName = @"E:\3Proj\16NS109\CPLD\pdf\try\电源DC-DC_01_12_07.pdf";
-            PdfiumSplitSearch pdfiumSplitSearch = new PdfiumSplitSearch(g_splitTempFolder, AppendLog);
+            Pdfium pdfium = new Pdfium(AppendLog);
             string msg;
             AppendLog("step 1: search Wartermark");
-            List<WatermarkFound> watermarkFoundList = pdfiumSplitSearch.PdfiumSearchWartermark(fileName, out msg);
+            List<WatermarkFound> watermarkFoundList = pdfium.PdfiumSearchWartermark((string)fileName, out msg);
             if (watermarkFoundList == null)
             {
                 AppendLog(msg);
                 return;
             }
             AppendLog("step 2: split");
-            if (pdfiumSplitSearch.PdfiumSplit(fileName, out msg) == false)
+            if (pdfium.PdfiumSplit(g_splitTempFolder, (string)fileName, out msg) == false)
             {
                 AppendLog(msg);
                 return;
@@ -252,6 +257,15 @@ namespace pdfRemoveWaterMark
                 return;
             }
             AppendLog("step 4: merge");
+            string directory = Path.GetDirectoryName((string)fileName);
+            if (pdfium.PdfiumMerge(g_removedTempFolder, directory, (string)fileName, out msg) == false)
+            {
+                AppendLog(msg);
+                return;
+            }
+            AppendLog("step 4: merge");
+
+            
         }
     }
 }
