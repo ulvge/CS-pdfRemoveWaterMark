@@ -1,5 +1,7 @@
-﻿using iText.Kernel.Pdf;
+﻿using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Pdf.Canvas.Parser.Data;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using System;
 using System.Collections.Generic;
@@ -12,66 +14,149 @@ namespace pdfRemoveWaterMark
 {
     class PdfiumSplitSearch
     {
-        private string fileName;
-        //private List<IList<PdfRectangle>> wartMarkBounds;
+        public List<WatermarkFound> wartermarkFoundBounds = new List<WatermarkFound>();
+        public delegate void AppendLog(string arg);
+        private string outputPdfFolder = "pdfSplit";
+        private AppendLog appendLog;
 
-        public PdfiumSplitSearch(string fileName)
+        public PdfiumSplitSearch(AppendLog appendLog)
         {
-            this.fileName = fileName;
-            PdfiumSplit(fileName);
+            this.appendLog = appendLog;
         }
-        private string PdfiumSplit(string fileName)
+        public bool PdfiumSplit(string fileName, out string msg)
         {
-            PdfReader reader = new PdfReader(fileName);
-            PdfDocument document = new PdfDocument(reader);
-            int pageCount = document.GetNumberOfPages();
-            for (int i = 1; i < document.GetNumberOfPages() + 1; i++)
-            {
-                PdfPage page = document.GetPage(i);
-            }
-            return string.Empty;
-        }
-        private string PdfiumSearchWartermark(string fileName)
-        {
-            string warterMark = "Silergy Corp. Confidential-Prepared for Jovial";
             try
             {
+                msg = string.Empty;
+                PdfReader reader = new PdfReader(fileName);
+                PdfDocument document = new PdfDocument(reader);
+
+                for (int pageNum = 1; pageNum <= document.GetNumberOfPages(); pageNum++)
+                {
+                    PdfPage page = document.GetPage(pageNum);
+
+                    // 创建输出PDF文档
+                    string outputPdfFilePath = System.IO.Path.Combine(outputPdfFolder, $"{pageNum}.pdf");
+                    using (PdfWriter pdfWriter = new PdfWriter(outputPdfFilePath))
+                    {
+                        using (PdfDocument outputPdfDocument = new PdfDocument(pdfWriter))
+                        {
+                            // 复制当前页到输出文档
+                            document.CopyPagesTo(pageNum, pageNum, outputPdfDocument);
+                        }
+                    }
+                    appendLog($"Page {pageNum} saved to: {outputPdfFilePath}");
+                }
+                document.Close();
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                msg = ex.Message;
+                return false;
+            }
+            return true;
+        }
+        public List<WatermarkFound> PdfiumSearchWartermark(string fileName, out string msg)
+        {
+            string[] warterMark = { "Silergy Corp. Confidential-Prepared for Jovial", "12345678" };
+            try
+            {   
                 PdfReader pdfReader = new PdfReader(fileName);
-                PdfDocument document = new PdfDocument(pdfReader, new PdfWriter("output.pdf"));
-                for (int pageNum = 0; pageNum < document.GetNumberOfPages(); pageNum++)
+                PdfDocument document = new PdfDocument(pdfReader);
+                for (int pageNum = 1; pageNum <= document.GetNumberOfPages(); pageNum++)
                 {
                     PdfPage pdfPage = document.GetPage(pageNum);
 
                     // 创建文本提取策略
-                    var strategy = new SimpleTextExtractionStrategy();
+                   // SimpleTextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
+                    var strategy = new CustomTextExtractionStrategy(warterMark);
 
-                    // 创建 PdfCanvasProcessor 对象 // 处理页面内容
-                    new PdfCanvasProcessor(strategy).ProcessPageContent(pdfPage);
+                    // 创建 PdfCanvasProcessor 对象 // NuGet 处理页面内容 itext7.font-asian
+                    PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(strategy);
+                    pdfCanvasProcessor.ProcessPageContent(pdfPage);
 
                     // 获取提取的文本
                     string extractedText = strategy.GetResultantText();
 
                     // 检查文本是否包含搜索字符串
-                    if (extractedText.Contains(warterMark))
+                    if (strategy.isFound)
                     {
-                        // 获取字符间的位置信息
-                        //var charInfos = strategy.GetLocations();
-
                         // 输出搜索到的文本及其位置信息
-                        Console.WriteLine($"Found text '{warterMark}' on page {pageNum}:");
-
-                        /*foreach (var charInfo in charInfos)
-                        {
-                            Console.WriteLine($"Char: {charInfo.Text}, X: {charInfo.GetX()}, Y: {charInfo.GetY()}");
-                        }*/
+                        appendLog($"Found water text on page {pageNum}:{ Environment.NewLine}{string.Join(Environment.NewLine, warterMark)} { Environment.NewLine}");
+                        List<Rectangle>  bounds = strategy.GetBoundingBoxList();
+                        WatermarkFound watermarkFound = new WatermarkFound(pageNum, bounds);
+                        wartermarkFoundBounds.Add(watermarkFound);
                     }
                 }
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                appendLog("PdfiumSearchWartermark" + ex.Message);
+                msg = ex.Message;
+                return null;
             }
-            return "";
+            msg = "handler success";
+            return wartermarkFoundBounds;
+        }
+
+
+        class CustomTextExtractionStrategy : LocationTextExtractionStrategy
+        {
+            private readonly string[] searchTextList;
+            public List<Rectangle> searchTextListBounds = new List<Rectangle>();
+            public bool isFound = false;
+
+            public CustomTextExtractionStrategy(string[] searchTextList)
+            {
+                this.searchTextList = searchTextList;
+            }
+
+            public override void EventOccurred(IEventData data, EventType type)
+            {
+                if (type == EventType.RENDER_TEXT)
+                {
+                    TextRenderInfo renderInfo = (TextRenderInfo)data;
+                    string text = renderInfo.GetText();
+                    if (text.Length > 4){
+                        Console.WriteLine("EventOccurred :"+ text);
+                    }
+                    for (int i = 0; i < searchTextList.Length; i++)
+                    {
+                        if (text.Contains(searchTextList[i]))
+                        {
+                            Rectangle boundingBox = GetTextRectangle(renderInfo);
+                            searchTextListBounds.Add(boundingBox);
+                            isFound = true;
+                        }
+                    }
+                }
+            }
+
+            /// <summary>
+            /// 单个文本，如char
+            /// </summary>
+            /// <returns></returns>
+            public List<Rectangle> GetBoundingBoxList()
+            {
+                return searchTextListBounds;
+            }
+            /// <summary>
+            /// 整个文本块
+            /// </summary>
+            /// <param name="renderInfo"></param>
+            /// <returns></returns>
+
+            private iText.Kernel.Geom.Rectangle GetTextRectangle(TextRenderInfo renderInfo)
+            {
+                Matrix textToUserSpaceTransform = renderInfo.GetTextMatrix().Multiply(renderInfo.GetTextMatrix());
+                float x = textToUserSpaceTransform.Get(6);
+                float y = textToUserSpaceTransform.Get(7);
+                float width = renderInfo.GetDescentLine().GetLength();
+                float height = renderInfo.GetAscentLine().GetLength();
+
+                return new iText.Kernel.Geom.Rectangle(x, y, width, height);
+            }
         }
     }
 }

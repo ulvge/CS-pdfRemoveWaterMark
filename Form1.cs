@@ -79,10 +79,15 @@ namespace pdfRemoveWaterMark
                 return false;
             }
         }
-        private void AppendLog(string msg)
+        public delegate void LogDelegate(string msg);
+        public void AppendLog(string msg)
         {
-            Console.WriteLine(msg);
-            tb_log.AppendText(msg + Environment.NewLine);
+            // 在这里执行刷新UI所需的操作
+            Invoke(new Action(() =>
+            {
+                Console.WriteLine(msg);
+                tb_log.AppendText(msg + Environment.NewLine);
+            }));
         }
         /// <summary>
         /// 删除 水印
@@ -115,7 +120,7 @@ namespace pdfRemoveWaterMark
                 }
                 if (removeCount == 0)
                 {
-                    AppendLog(string.Format("pages: {0}, not found any watermark", i));
+                    AppendLog(string.Format("pages: {0}, not remove any watermark", i));
                 }
                 pageObj.GenerateContent();
             }
@@ -158,7 +163,15 @@ namespace pdfRemoveWaterMark
         private void CreateBackgroundThread(string fileName)
         {
             fileName = @"E:\3Proj\16NS109\CPLD\pdf\try\电源DC-DC_01_12_07.pdf";
-            new PdfiumSplitSearch(fileName);
+            PdfiumSplitSearch pdfiumSplitSearch = new PdfiumSplitSearch(AppendLog);
+            string msg;
+            pdfiumSplitSearch.PdfiumSplit(fileName, out msg);
+
+            List<WatermarkFound> watermarkFoundList = pdfiumSplitSearch.PdfiumSearchWartermark(fileName, out msg);
+            if (watermarkFoundList == null)
+            {
+                AppendLog(msg);
+            }
             pdfHandler(fileName);
         }
     }
