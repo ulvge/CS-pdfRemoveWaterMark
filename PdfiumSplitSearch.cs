@@ -16,12 +16,13 @@ namespace pdfRemoveWaterMark
     {
         public List<WatermarkFound> wartermarkFoundBounds = new List<WatermarkFound>();
         public delegate void AppendLog(string arg);
-        public static string outputPdfFolder = "pdfSplit";
+        public string outputPdfFolder;
         private AppendLog appendLog;
 
-        public PdfiumSplitSearch(AppendLog appendLog)
+        public PdfiumSplitSearch(string splitTempFolder, AppendLog appendLog)
         {
             this.appendLog = appendLog;
+            this.outputPdfFolder = splitTempFolder;
         }
         public bool PdfiumSplit(string fileName, out string msg)
         {
@@ -150,13 +151,13 @@ namespace pdfRemoveWaterMark
 
             private iText.Kernel.Geom.Rectangle GetTextRectangle(TextRenderInfo renderInfo)
             {
-                Matrix textToUserSpaceTransform = renderInfo.GetTextMatrix().Multiply(renderInfo.GetTextMatrix());
-                float x = textToUserSpaceTransform.Get(6);
-                float y = textToUserSpaceTransform.Get(7);
-                float width = renderInfo.GetDescentLine().GetLength();
-                float height = renderInfo.GetAscentLine().GetLength();
-
-                return new iText.Kernel.Geom.Rectangle(x, y, width, height);
+                //Matrix textToUserSpaceTransform = renderInfo.GetTextMatrix().Multiply(renderInfo.GetTextMatrix());
+                //float x = textToUserSpaceTransform.Get(6);
+                //float y = textToUserSpaceTransform.Get(7);
+                //float width = renderInfo.GetDescentLine().GetLength();
+                //float height = renderInfo.GetAscentLine().GetLength();
+                //float allTextLength = renderInfo.GetDescentLine().GetLength();
+                return new iText.Kernel.Geom.Rectangle(renderInfo.GetDescentLine().GetBoundingRectangle());
             }
         }
     }

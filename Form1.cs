@@ -16,6 +16,8 @@ namespace pdfRemoveWaterMark
 {
     public partial class Form1 : Form
     {
+        public static string splitTempFolder = "pdfSplit__";
+        private static string g_removedTempFolder = "removed__";
         public Form1()
         {
             InitializeComponent();
@@ -59,11 +61,45 @@ namespace pdfRemoveWaterMark
             }
         }
         /// <summary>
+        /// 根据 text rect的 宽高范围，判断是否是指定查找的object
+        /// </summary>
+        /// <param name="objRect"> page中的某个对象</param>
+        /// <param name="textRect">搜索到的水印坐标</param>
+        /// <param name="outAccuracy">输出:实际的误差 textRect - objRect</param>
+        /// <param name="accuracy">输入，允许的最大误差</param>
+        /// <param name="tolerance">输入，允许的最大误差</param>
+        /// <returns></returns>
+        private bool IsMatchText(FS_RECTF objRect, WatermarkFound textRect, out PointF outTolerance, float accuracy = 30, float inTolerance = 0.1f)
+        {
+            outTolerance = new PointF(0, 0);
+            foreach (iText.Kernel.Geom.Rectangle rect in textRect.warterMarkBounds)
+            {
+                if (((rect.GetWidth() - accuracy) <= objRect.Width) && (objRect.Width <= (rect.GetWidth() + accuracy)) &&
+                    ((rect.GetHeight() - accuracy) <= objRect.Height) && (objRect.Height <= (rect.GetHeight() + accuracy)))
+                {
+                    outTolerance.X = rect.GetWidth() - objRect.Width;
+                    outTolerance.Y = rect.GetHeight() - objRect.Height;
+                    if (((Math.Abs(outTolerance.X) / rect.GetWidth()) > inTolerance) || ((Math.Abs(outTolerance.X) / rect.GetHeight()) > inTolerance))
+                    {
+                        return false;
+                    }
+                    //outTolerance.X = (int)(rect.GetWidth() - objRect.Width);
+                    //outTolerance.Y = (int)(rect.GetHeight() - objRect.Height);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+        /// <summary>
         /// 根据 UI设定的 宽高范围，判断是否是指定查找的object
         /// </summary>
-        /// <param name="objRect"></param>
+        /// <param oriFileName="objRect"></param>
         /// <returns></returns>
-        private bool IsMatch(FS_RECTF objRect, ImageRectArea imageRect)
+        private bool IsMatchImage(FS_RECTF objRect, ImageRectArea imageRect)
         {
             if (objRect.Width * objRect.Height <= 1)
             {
@@ -89,16 +125,87 @@ namespace pdfRemoveWaterMark
                 tb_log.AppendText(msg + Environment.NewLine);
             }));
         }
+        private bool Patagames_removeTextRect(string splitTempFolder, List<WatermarkFound> watermarkFounds)
+        {
+            if (!Directory.Exists(splitTempFolder))
+            {
+                return false;
+            }
+            try
+            {
+                for (int pageNum = 1; pageNum <= watermarkFounds.Count; pageNum++)
+                {
+                    int removeCount = 0;
+                    string splitPdfFilePath = Path.Combine(splitTempFolder, $"{pageNum}.pdf");
+                    string outputPdfFilePath = Path.Combine(g_removedTempFolder, $"{pageNum}.pdf");
+                    if (!Directory.Exists(g_removedTempFolder))
+                    {
+                        Directory.CreateDirectory(g_removedTempFolder);
+                    }
+                    PdfDocument document = PdfDocument.Load(splitPdfFilePath);
+                    PdfPage pageObj = document.Pages[0]; // only one
+                    WatermarkFound targetWatermarkFound = watermarkFounds.FirstOrDefault(w => w.page == pageNum);
+                    if (targetWatermarkFound == null)
+                    {
+                        continue;
+                    }
+
+                    for (int j = pageObj.PageObjects.Count - 1; j >= 0; j--)
+                    {
+                        FS_RECTF rect = pageObj.PageObjects[j].BoundingBox;
+                        PointF outTolerance = new PointF(0, 0);
+                        if (IsMatchText(rect, targetWatermarkFound, out outTolerance, 50, 0.1f))
+                        {
+                            removeCount++;
+                            AppendLog($"pages: {pageNum} text , Remove At Ojbect: {j} , search rect.w h : {(int)rect.Width}, {(int)rect.Height}" +
+                                $", outTolerance:{ outTolerance.X },{ outTolerance.Y }");
+                            pageObj.PageObjects.RemoveAt(j);
+                        } else
+                        {
+                            if (rect.Height > 30)
+                            {
+                                Console.WriteLine($"rect.Width={rect.Width}, rect.Height={rect.Height}");
+                            }
+                        }
+                    }
+                    if (removeCount == 0)
+                    {
+                        AppendLog(string.Format("pages: {0} text , not remove any watermark", pageNum));
+                    }
+                    pageObj.GenerateContent();
+
+                    // save
+                    Console.WriteLine("newName: " + outputPdfFilePath);
+                    document.WriteBlock += (s, ex) => {
+                        using (var stream = new FileStream(outputPdfFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                        {
+                            stream.Seek(0, SeekOrigin.End);
+                            stream.Write(ex.Buffer, 0, ex.Buffer.Length);
+                        }
+                    };
+                    document.Save(Patagames.Pdf.Enums.SaveFlags.NoIncremental | Patagames.Pdf.Enums.SaveFlags.RemoveUnusedObjects);
+                    document.Dispose();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return true;
+        }
         /// <summary>
         /// 删除 水印
         /// </summary>
-        /// <param name="name"></param>
-        private void pdfHandler(string name)
+        /// <param oriFileName="name"></param>
+        private void Patagames_mergeOneByOne(string oriFileName, string splitTempFolder, List<WatermarkFound> watermarkFounds)
         {
-            string path = name.Substring(0, name.LastIndexOf('\\') + 1);
-            string[] fileNameExt = name.Substring(name.LastIndexOf('\\') + 1).Split('.');
-            string newName = path + fileNameExt[0] + "_" + DateTime.Now.ToString("yyyy_MM_dd-HHmmss") + "." + fileNameExt[1];
-            PdfDocument document = PdfDocument.Load(name);
+            Patagames_removeTextRect(splitTempFolder, watermarkFounds);
+            string oriFilePath = oriFileName.Substring(0, oriFileName.LastIndexOf('\\') + 1);
+            string[] fileNameExt = oriFileName.Substring(oriFileName.LastIndexOf('\\') + 1).Split('.');
+            string newName = oriFilePath + fileNameExt[0] + "_" + DateTime.Now.ToString("yyyy_MM_dd-HHmmss") + "." + fileNameExt[1];
+            PdfDocument document = PdfDocument.Load(oriFileName);
+
             ImageRectArea imageRectArea = new ImageRectArea(w_min.Text, w_max.Text, h_min.Text, h_max.Text);
             for (int i = 0; i < document.Pages.Count; i++)
             {
@@ -111,7 +218,7 @@ namespace pdfRemoveWaterMark
                 for (int j = pageObj.PageObjects.Count - 1; j >= 0; j--)
                 {
                     FS_RECTF rect = pageObj.PageObjects[j].BoundingBox;
-                    if (IsMatch(rect, imageRectArea))
+                    if (IsMatchImage(rect, imageRectArea))
                     {
                         removeCount++;
                         AppendLog(string.Format("pages: {0}, RemoveAt Ojbect: {1} , rect.w : {2}, rect.h : {3}", i, j, rect.Width, rect.Height));
@@ -139,8 +246,8 @@ namespace pdfRemoveWaterMark
         /// <summary>
         /// 选择 pdf 文件
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param oriFileName="sender"></param>
+        /// <param oriFileName="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
             CreateBackgroundThread(string.Empty);
@@ -163,7 +270,7 @@ namespace pdfRemoveWaterMark
         private void CreateBackgroundThread(string fileName)
         {
             fileName = @"E:\3Proj\16NS109\CPLD\pdf\try\电源DC-DC_01_12_07.pdf";
-            PdfiumSplitSearch pdfiumSplitSearch = new PdfiumSplitSearch(AppendLog);
+            PdfiumSplitSearch pdfiumSplitSearch = new PdfiumSplitSearch(splitTempFolder, AppendLog);
             string msg;
             pdfiumSplitSearch.PdfiumSplit(fileName, out msg);
 
@@ -172,7 +279,7 @@ namespace pdfRemoveWaterMark
             {
                 AppendLog(msg);
             }
-            pdfHandler(fileName);
+            Patagames_mergeOneByOne(fileName, splitTempFolder, watermarkFoundList);
         }
     }
 }
