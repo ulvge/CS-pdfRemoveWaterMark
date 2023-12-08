@@ -31,9 +31,26 @@ namespace pdfRemoveWaterMark
             tb_log.Clear();
         }
 
+        private void AbordWorkThread()
+        {
+            try
+            {
+                // 创建一个新线程
+                if (g_threadMainWork != null)
+                {
+                    g_threadMainWork.Abort();
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+        }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             IniHelper iniHelper = new IniHelper();
+
+            AbordWorkThread();
             string[] excludeName = { tb_log.Name };
             iniHelper.IniUpdate2File(this, excludeName);
         }
@@ -136,14 +153,22 @@ namespace pdfRemoveWaterMark
         public delegate void LogDelegate(string msg, bool isDisplayUI = true);
         public void AppendLog(string msg, bool isDisplayUI = true)
         {
-            // 在这里执行刷新UI所需的操作
-            Invoke(new Action(() =>
+            try
             {
-                Console.WriteLine(msg);
-                if (isDisplayUI) { 
-                    tb_log.AppendText(msg + Environment.NewLine);
-                }
-            }));
+                // 在这里执行刷新UI所需的操作
+                Invoke(new Action(() =>
+                {
+                    Console.WriteLine(msg);
+                    if (isDisplayUI)
+                    {
+                        tb_log.AppendText(msg + Environment.NewLine);
+                    }
+                }));
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
         /// <summary>
         /// 删除 水印
@@ -189,7 +214,7 @@ namespace pdfRemoveWaterMark
                                 if (IsMatchTextConect(objText, warterMark))
                                 {
                                     removeCount++;
-                                    AppendLog($"\tpages: {pageNum} text Conect, Remove At Ojbect: {j} :{objText}");
+                                    AppendLog($"\tpages: {pageNum} text Conect, Remove :{objText}");
                                     pageObj.PageObjects.RemoveAt(j);
                                     isTextMatchSuccess = true;
                                 }
@@ -201,7 +226,7 @@ namespace pdfRemoveWaterMark
                             if ((isTextMatchSuccess == false) && IsMatchTextRect(rect, targetWatermarkFound, out outTolerance, 50, 0.1f))
                             {
                                 removeCount++;
-                                AppendLog($"\tpages: {pageNum} text rect, Remove At Ojbect: {j} , search rect.w h : {(int)rect.Width}, {(int)rect.Height}" +
+                                AppendLog($"\tpages: {pageNum} text rect, Remove:  search rect.w h : {(int)rect.Width}, {(int)rect.Height}" +
                                     $", outTolerance:{ outTolerance.X },{ outTolerance.Y }");
                                 pageObj.PageObjects.RemoveAt(j);
                             }
@@ -265,12 +290,22 @@ namespace pdfRemoveWaterMark
 
             if (fileDialog.ShowDialog() == DialogResult.OK)
             {
-                //选择图片进行加载
                 tb_fileRoot.Text = fileDialog.FileName;
                 if (tb_fileRoot.Text.EndsWith(".pdf"))
                 {
                     CreateBackgroundThreadWork(tb_fileRoot.Text);
                 }
+            }
+        }
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (tb_fileRoot.Text.EndsWith(".pdf"))
+            {
+                CreateBackgroundThreadWork(tb_fileRoot.Text);
+            }
+            else
+            {
+                MessageBox.Show("请先选择一个pdf文件");
             }
         }
         Thread g_threadMainWork = null;
@@ -283,6 +318,7 @@ namespace pdfRemoveWaterMark
                 {
                     g_threadMainWork.Abort();
                 }
+                tb_fileRoot.Text = fileName;
                 g_threadMainWork = new Thread(new ParameterizedThreadStart(mainWork));
                 g_threadMainWork.Start(fileName);
             }
@@ -362,5 +398,6 @@ namespace pdfRemoveWaterMark
             string fileName = (e.Data.GetData(DataFormats.FileDrop, false) as String[])[0];
             CreateBackgroundThreadWork(fileName);
         }
+
     }
 }

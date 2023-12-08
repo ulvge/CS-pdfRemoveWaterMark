@@ -48,6 +48,7 @@ namespace pdfRemoveWaterMark
             this.h_max = new System.Windows.Forms.TextBox();
             this.tb_log = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -59,7 +60,7 @@ namespace pdfRemoveWaterMark
             this.tb_fileRoot.Location = new System.Drawing.Point(130, 22);
             this.tb_fileRoot.Margin = new System.Windows.Forms.Padding(4);
             this.tb_fileRoot.Name = "tb_fileRoot";
-            this.tb_fileRoot.Size = new System.Drawing.Size(290, 25);
+            this.tb_fileRoot.Size = new System.Drawing.Size(264, 25);
             this.tb_fileRoot.TabIndex = 5;
             this.tb_fileRoot.DragDrop += new System.Windows.Forms.DragEventHandler(this.tb_fileRoot_DragDrop);
             this.tb_fileRoot.DragEnter += new System.Windows.Forms.DragEventHandler(this.tb_fileRoot_DragEnter);
@@ -76,10 +77,10 @@ namespace pdfRemoveWaterMark
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(431, 18);
+            this.button1.Location = new System.Drawing.Point(402, 18);
             this.button1.Margin = new System.Windows.Forms.Padding(4);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(59, 29);
+            this.button1.Size = new System.Drawing.Size(88, 29);
             this.button1.TabIndex = 3;
             this.button1.Text = "选择文件";
             this.button1.UseVisualStyleBackColor = true;
@@ -91,7 +92,7 @@ namespace pdfRemoveWaterMark
             this.tb_warterMark.Margin = new System.Windows.Forms.Padding(4);
             this.tb_warterMark.Multiline = true;
             this.tb_warterMark.Name = "tb_warterMark";
-            this.tb_warterMark.Size = new System.Drawing.Size(369, 82);
+            this.tb_warterMark.Size = new System.Drawing.Size(343, 82);
             this.tb_warterMark.TabIndex = 5;
             // 
             // groupBox1
@@ -100,7 +101,7 @@ namespace pdfRemoveWaterMark
             this.groupBox1.Controls.Add(this.tb_warterMark);
             this.groupBox1.Location = new System.Drawing.Point(34, 96);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(397, 100);
+            this.groupBox1.Size = new System.Drawing.Size(375, 100);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             // 
@@ -249,6 +250,17 @@ namespace pdfRemoveWaterMark
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "日志";
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(402, 60);
+            this.button2.Margin = new System.Windows.Forms.Padding(4);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(87, 29);
+            this.button2.TabIndex = 3;
+            this.button2.Text = "处  理";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -259,6 +271,7 @@ namespace pdfRemoveWaterMark
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.tb_fileRoot);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
             this.Text = "pdfRemoveWaterMark";
@@ -296,6 +309,7 @@ namespace pdfRemoveWaterMark
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.CheckBox cb_isText;
         private System.Windows.Forms.CheckBox cb_isImage;
+        private System.Windows.Forms.Button button2;
     }
 }
 
