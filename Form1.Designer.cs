@@ -32,7 +32,7 @@ namespace pdfRemoveWaterMark
             this.tb_fileRoot = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tb_warterMark = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cb_isText = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -85,19 +85,19 @@ namespace pdfRemoveWaterMark
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox1
+            // tb_warterMark
             // 
-            this.textBox1.Location = new System.Drawing.Point(17, 18);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(4);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(369, 82);
-            this.textBox1.TabIndex = 5;
+            this.tb_warterMark.Location = new System.Drawing.Point(17, 18);
+            this.tb_warterMark.Margin = new System.Windows.Forms.Padding(4);
+            this.tb_warterMark.Multiline = true;
+            this.tb_warterMark.Name = "tb_warterMark";
+            this.tb_warterMark.Size = new System.Drawing.Size(369, 82);
+            this.tb_warterMark.TabIndex = 5;
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.cb_isText);
-            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.tb_warterMark);
             this.groupBox1.Location = new System.Drawing.Point(34, 96);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(397, 100);
@@ -280,7 +280,7 @@ namespace pdfRemoveWaterMark
         private System.Windows.Forms.TextBox tb_fileRoot;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox tb_warterMark;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox textBox2;

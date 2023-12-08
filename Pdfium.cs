@@ -23,44 +23,49 @@ namespace pdfRemoveWaterMark
         {
             this.appendLog = appendLog;
         }
-        public bool PdfiumSplit(string splitTempFolder, string fileName, out string msg)
+        public bool PdfiumSplit(string splitTempFolder, string oriFileName, out string msg)
         {
             try
             {
                 msg = string.Empty;
-                PdfReader reader = new PdfReader(fileName);
-                PdfDocument document = new PdfDocument(reader);
+                PdfReader oriFilePdfReader = new PdfReader(oriFileName);
+                PdfDocument oriFileDoc = new PdfDocument(oriFilePdfReader);
                 if (!Directory.Exists(splitTempFolder))
                 {
                     Directory.CreateDirectory(splitTempFolder);
                 }
 
-                for (int pageNum = 1; pageNum <= document.GetNumberOfPages(); pageNum++)
+                for (int pageNum = 1; pageNum <= oriFileDoc.GetNumberOfPages(); pageNum++)
                 {
-                    PdfPage page = document.GetPage(pageNum);
+                    PdfPage page = oriFileDoc.GetPage(pageNum);
 
                     // 创建输出PDF文档
                     string outputPdfFilePath = System.IO.Path.Combine(splitTempFolder, $"{pageNum}.pdf");
-                    using (PdfDocument outputPdfDocument = new PdfDocument(new PdfWriter(outputPdfFilePath)))
-                    {
-                        // 复制当前页到输出文档
-                        document.CopyPagesTo(pageNum, pageNum, outputPdfDocument);
-                    }
+
+                    PdfWriter pdfWriter = new PdfWriter(outputPdfFilePath);
+                    PdfDocument outputPdfDocument = new PdfDocument(pdfWriter);
+                    // 复制当前页到输出文档
+                    oriFileDoc.CopyPagesTo(pageNum, pageNum, outputPdfDocument);
+                    outputPdfDocument.FlushCopiedObjects(oriFileDoc);
                     appendLog($"Page {pageNum} saved to: {outputPdfFilePath}", false);
+                    outputPdfDocument.Close();
+                    pdfWriter.Close();
                 }
-                document.Close();
-                reader.Close();
+                oriFileDoc.Close();
+                oriFilePdfReader.Close();
             }
             catch (Exception ex)
             {
                 msg = ex.Message;
                 return false;
             }
+            finally
+            {
+            }
             return true;
         }
-        public List<WatermarkFound> PdfiumSearchWartermark(string fileName, out string msg)
+        public List<WatermarkFound> PdfiumSearchWartermark(string fileName, string[] warterMark, out string msg)
         {
-            string[] warterMark = { "Silergy Corp. Confidential-Prepared for Jovial", "12345678" };
             try
             {   
                 PdfReader pdfReader = new PdfReader(fileName);
@@ -97,7 +102,7 @@ namespace pdfRemoveWaterMark
                 msg = ex.Message;
                 return null;
             }
-            msg = "handler success";
+            msg = "Search wartermark finished, found count:" + wartermarkFoundBounds.Count;
             return wartermarkFoundBounds;
         }
 
@@ -123,7 +128,8 @@ namespace pdfRemoveWaterMark
                     }
                     for (int i = 0; i < searchTextList.Length; i++)
                     {
-                        if (text.Contains(searchTextList[i]))
+                        string searchText = searchTextList[i];
+                        if ((searchText.Length >= 1) && text.Contains(searchText))
                         {
                             Rectangle boundingBox = GetTextRectangle(renderInfo);
                             searchTextListBounds.Add(boundingBox);

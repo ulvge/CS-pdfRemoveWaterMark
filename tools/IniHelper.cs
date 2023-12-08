@@ -89,6 +89,7 @@ namespace Debug.tools {
             }
             return textBoxList;
         }
+        private const string magic_separator = "^|";
         /// <summary>
         /// 从ini读取 参数，并加载到控件中
         /// </summary>
@@ -105,6 +106,12 @@ namespace Debug.tools {
                     if(tb is TextBox) {
                         TextBox t = (TextBox)tb;
                         string readVal = getString(form.Text, t.Name, string.Empty, INI_FILE_NAME);
+                        if (t.Multiline == true)
+                        {
+                            if (readVal.Contains(magic_separator)) {
+                                readVal = readVal.Replace(magic_separator, Environment.NewLine);
+                            }
+                        }
                         t.Text = readVal;
                     } else if(tb is ComboBox) {
                         ComboBox c = (ComboBox)tb;
@@ -120,14 +127,64 @@ namespace Debug.tools {
                 Console.WriteLine(ex.Message);
             }
         }
-        public void IniUpdate2File(Form form, string iniFileName = INI_FILE_NAME) {
+        /// <summary>
+        /// 在指定排除列表中，查找到匹配的控件名称时，返回true，表示需要被排除，不保存。
+        /// </summary>
+        /// <param name="tb">当前控件</param>
+        /// <param name="excludeControlName">指定的排除列表</param>
+        /// <returns>返回true，表示需要被排除，不保存</returns>
+        private bool IsExcludeNotSaved(object tb, string[] excludeControlName)
+        {
+            string tbName;
+            if (excludeControlName == null)
+            {
+                return false;
+            }
+            if (tb is TextBox)
+            {
+                TextBox t = (TextBox)tb;
+                tbName = t.Name;
+            }
+            else if (tb is ComboBox)
+            {
+                ComboBox c = (ComboBox)tb;
+                tbName = c.Name;
+            }
+            else if (tb is CheckBox)
+            {
+                CheckBox c = (CheckBox)tb;
+                tbName = c.Name;
+            }
+            else
+            {
+                return false;
+            }
+            foreach (var item in excludeControlName)
+            {
+                if (tbName.Equals(item))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public void IniUpdate2File(Form form, string[] excludeControlName = null, string iniFileName = INI_FILE_NAME) {
             textBoxList.Clear();
             textBoxList = FandAllTextBoxControls(form);
             foreach(var tb in textBoxList) {
+                if (IsExcludeNotSaved(tb, excludeControlName))
+                {
+                    continue;
+                }
                 //write vals to ini
                 if(tb is TextBox) {
                     TextBox t = (TextBox)tb;
-                    writeString(form.Text, t.Name, t.Text.ToString(), iniFileName);
+                    string saveFiled = t.Text.ToString();
+                    if (t.Multiline == true)
+                    {
+                        saveFiled = saveFiled.Replace(Environment.NewLine, magic_separator);
+                    }
+                    writeString(form.Text, t.Name, saveFiled, iniFileName);
                 } else if(tb is ComboBox) {
                     ComboBox c = (ComboBox)tb;
                     writeString(form.Text, c.Name, c.Text.ToString(), iniFileName);
