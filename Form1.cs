@@ -42,12 +42,15 @@ namespace pdfRemoveWaterMark
         private void AddUsage()
         {
             AppendLog("帮助：");
-            AppendLog("\t本软件可去除pdf水印，支持水印类型，文本和图片，也可自动按颜色识别去除相同内容");
+            AppendLog("\t本软件可去除pdf密码，去除水印，支持水印类型，文本和图片，也可自动按颜色识别去除相同内容");
             AppendLog("\t本软件识别图片中的文本，开发阶段...");
             //AppendLog(Environment.NewLine);
             AppendLog("关于指定页面：");
             AppendLog("\t可指定想要处理的文件页面，而非全部");
             AppendLog("\t指定范围格式和其它方法通用，1,2,4-6：表示处理第1、2、4、5、6页");
+            //AppendLog(Environment.NewLine);
+            AppendLog("关于 只解密，不去除水印：");
+            AppendLog("\t优先级最高。去除密码后，目录不丢失");
             //AppendLog(Environment.NewLine);
             AppendLog("关于水印是文本：");
             AppendLog("\t如果是水印是文本类型，可一次性去除多条文本，用换行隔开");
@@ -850,7 +853,7 @@ _exit:
                 return;
             }
             iText7 itext7 = new iText7(AppendLog);
-            string msg;
+            string msg = string.Empty;
             ClearWorkTemp(g_outputImagePath); // clear last record
             g_outputPdfFolder = Path.GetDirectoryName(fileName);
             g_outputImagePath = g_outputPdfFolder + "\\" + TEMP_IMAGES;
@@ -861,7 +864,15 @@ _exit:
             GetPageRange(fileName, g_pageNumber, itext7.pageRange);
             AppendLog("step 1: search Wartermark");
             string[] textWarterMark = GetWarterMarkListFromUI();
-            List<WatermarkTextFound> watermarkFoundList = itext7.PdfSearchWartermarkText(fileName, textWarterMark, out msg);
+            List<WatermarkTextFound> watermarkFoundList;
+            if (checkBox_decryptOnly.Checked)
+            {
+                watermarkFoundList = new List<WatermarkTextFound>();
+            }
+            else
+            {
+                watermarkFoundList = itext7.PdfSearchWartermarkText(fileName, textWarterMark, out msg);
+            }
             if (watermarkFoundList.Count == 0)
             {
                 if (cb_isText.Checked == true) { 
