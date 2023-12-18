@@ -410,12 +410,30 @@ namespace pdfRemoveWaterMark
             }
             AppendLog("step 5: add outline");
 
+            ClearWorkTemp();
             AppendLog("finished success");
 
             string outputPdfFolder = Path.GetDirectoryName(msg);
             OpenPath(outputPdfFolder);
         }
 
-
+        private void ClearWorkTemp()
+        {
+            try
+            {
+                if (Directory.Exists(g_splitTempFolder))
+                {
+                    Directory.Delete(g_splitTempFolder, true); // 删除目录及其所有子目录和文件
+                }
+                if (Directory.Exists(g_removedTempFolder))
+                {
+                    Directory.Delete(g_removedTempFolder, true); // 删除目录及其所有子目录和文件
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
     }
 }
