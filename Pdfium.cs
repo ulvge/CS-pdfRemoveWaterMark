@@ -192,34 +192,17 @@ namespace pdfRemoveWaterMark
                 PdfDocument onePageDoc = new PdfDocument(new PdfReader(onePageFilePath));
 
                 merger.Merge(onePageDoc, 1, 1);
+                appendLog("\tmerge pageNum " + pageNum);
             }
             PdfiumAddOutLine(oriFileDocument, pdfDocSave);
-            //merger.Close();
+            merger.Close();
             pdfDocSave.Close();
             oriFileDocument.Close();
+            msg = outputPdfFolder;
             return true;
         }
 
-        // 递归添加目录项的辅助方法
-        static void AddOutlineItem(PdfDocument pdfDocument, PdfOutline parentOutline, string title, int pageNumber)
-        {
-            PdfPage targetPage = pdfDocument.GetPage(pageNumber);
-            // 创建子目录项
-            PdfOutline childOutline = parentOutline.AddOutline(title);
-
-            // 指定目录项的目标为指定页码
-            PdfDestination destination = PdfExplicitDestination.CreateFitH(targetPage, targetPage.GetPageSize().GetBottom());
-            childOutline.AddDestination(destination);
-
-            // 示例：添加子目录项
-            if (pageNumber + 1 < 10)
-            {
-                // 添加子节
-                AddOutlineItem(pdfDocument, childOutline, $"Section {pageNumber + 1}", pageNumber + 1);
-            }
-        }
-
-        static void CopyOutlines(PdfDocument sourcePdf, PdfOutline sourceOutline, PdfDocument targetDocument)
+        static void CopyOutlines(PdfDocument sourcePdf, PdfOutline sourceOutline, PdfDocument targetDocument, PdfOutline targetPdfOutlines)
         {
             if (sourceOutline != null)
             {
@@ -227,24 +210,23 @@ namespace pdfRemoveWaterMark
                 string title = sourceOutline.GetTitle();
 
                 // 在目标PDF文档中添加相应标题的大纲项
-                PdfOutline targetOutline = targetDocument.GetOutlines(false).AddOutline(title);
+                PdfOutline targetOutline = targetPdfOutlines.AddOutline(title);
 
                 // 获取大纲项的目标页码
                 int pageNumber = GetPageNumberByTitle(title, sourcePdf);
-                //int pageNumber = GetPageNumByOutline(sourcePdf, 1, );
 
                 if (pageNumber > 0)
                 {
-                    // 创建目标页的目标
-                    PdfExplicitDestination destination = PdfExplicitDestination.CreateFit(targetDocument.GetPage(pageNumber));
+                    // 创建目标页的目标 createXYZ 
+                    //PdfExplicitDestination destination = PdfExplicitDestination.CreateFit(targetDocument.GetPage(pageNumber));
+                    PdfExplicitDestination destination = PdfExplicitDestination.CreateXYZ(targetDocument.GetPage(pageNumber),300, 400, 1.2f);
                     targetOutline.AddDestination(destination);
                 }
 
                 // 递归处理子目录项
                 foreach (var childSourceOutline in sourceOutline.GetAllChildren())
                 {
-                    targetOutline.AddOutline(childSourceOutline.GetTitle());
-                    CopyOutlines(sourcePdf, childSourceOutline, targetDocument);
+                    CopyOutlines(sourcePdf, childSourceOutline, targetDocument, targetOutline);
                 }
             }
         }
@@ -281,7 +263,7 @@ namespace pdfRemoveWaterMark
             PdfOutline targetPdfOutlines = targetPdf.GetOutlines(true);
 
             // 复制源PDF文档的大纲到新文档
-            CopyOutlines(sourcePdf, sourcePdfOutlines, targetPdf);
+            CopyOutlines(sourcePdf, sourcePdfOutlines, targetPdf, targetPdfOutlines);
             Console.WriteLine("Outlines copied successfully.");
         }
     }

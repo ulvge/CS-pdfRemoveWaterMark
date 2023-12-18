@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -360,6 +361,18 @@ namespace pdfRemoveWaterMark
             }
             return list.ToArray();
         }
+        private void OpenPath(string path)
+        {
+            Process process = new Process();
+            process.StartInfo.FileName = "explorer.exe"; // 使用资源管理器打开路径
+            process.StartInfo.Arguments = path;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = true;
+
+            process.Start();
+            process.WaitForInputIdle(); // 等待资源管理器启动
+            process.Close();
+        }
         private void mainWork(object fileNameObj)
         {
             //string fileName = @"E:\3Proj\16NS109\CPLD\pdf\try\电源DC-DC_01_12_07.pdf";
@@ -367,28 +380,28 @@ namespace pdfRemoveWaterMark
             string fileName = fileNameObj.ToString();
             Pdfium pdfium = new Pdfium(AppendLog);
             string msg;
-            //AppendLog("step 1: search Wartermark");
-            //string[] warterMark = GetWarterMarkListFromUI();
-            //List<WatermarkFound> watermarkFoundList = pdfium.PdfiumSearchWartermark(fileName, warterMark, out msg);
-            //if (watermarkFoundList.Count == 0)
-            //{
-            //    AppendLog(msg);
-            //    return;
-            //}
-            //AppendLog("\tsearched Wartermark count:" + watermarkFoundList[0].warterMarkBounds.Count);
-            //AppendLog("step 2: split");
-            //if (pdfium.PdfiumSplit(g_splitTempFolder, fileName, out msg) == false)
-            //{
-            //    AppendLog(msg);
-            //    return;
-            //}
-            //AppendLog("\tsplit success");
-            //AppendLog("step 3: remove Water Mark");
-            //if (Patagames_removeWaterMarkOneByOne(warterMark, watermarkFoundList, out msg) == false)
-            //{
-            //    AppendLog(msg);
-            //    return;
-            //}
+            AppendLog("step 1: search Wartermark");
+            string[] warterMark = GetWarterMarkListFromUI();
+            List<WatermarkFound> watermarkFoundList = pdfium.PdfiumSearchWartermark(fileName, warterMark, out msg);
+            if (watermarkFoundList.Count == 0)
+            {
+                AppendLog(msg);
+                return;
+            }
+            AppendLog("\tsearched Wartermark count:" + watermarkFoundList[0].warterMarkBounds.Count);
+            AppendLog("step 2: split");
+            if (pdfium.PdfiumSplit(g_splitTempFolder, fileName, out msg) == false)
+            {
+                AppendLog(msg);
+                return;
+            }
+            AppendLog("\tsplit success");
+            AppendLog("step 3: remove Water Mark");
+            if (Patagames_removeWaterMarkOneByOne(warterMark, watermarkFoundList, out msg) == false)
+            {
+                AppendLog(msg);
+                return;
+            }
             AppendLog("step 4: merge");
             if (pdfium.PdfiumMerge(g_removedTempFolder, fileName, out msg) == false)
             {
@@ -398,6 +411,7 @@ namespace pdfRemoveWaterMark
             AppendLog("step 5: add outline");
 
             AppendLog("finished success");
+            OpenPath(msg);
         }
 
 
