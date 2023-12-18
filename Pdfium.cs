@@ -18,11 +18,23 @@ namespace pdfRemoveWaterMark
     {
         public List<WatermarkFound> wartermarkFoundBounds = new List<WatermarkFound>();
         public delegate void AppendLog(string arg, bool isDisplayUI = true);
+        public List<int> pageRange = new List<int>();
         private AppendLog appendLog;
 
         public Pdfium(AppendLog appendLog)
         {
             this.appendLog = appendLog;
+        }
+        private bool IsPageInPageRange(int i)
+        {
+            foreach (var item in pageRange)
+            {
+                if (item == i)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         public bool PdfiumSplit(string splitTempFolder, string oriFileName, out string msg)
         {
@@ -38,6 +50,10 @@ namespace pdfRemoveWaterMark
 
                 for (int pageNum = 1; pageNum <= oriFileDoc.GetNumberOfPages(); pageNum++)
                 {
+                    if (!IsPageInPageRange(pageNum))
+                    {
+                        continue;
+                    }
                     PdfPage page = oriFileDoc.GetPage(pageNum);
 
                     // 创建输出PDF文档
@@ -65,6 +81,15 @@ namespace pdfRemoveWaterMark
             }
             return true;
         }
+        public int PdfiumGetPageNumber(string fileName)
+        {
+            PdfReader pdfReader = new PdfReader(fileName);
+            PdfDocument document = new PdfDocument(pdfReader);
+            int pageNum = document.GetNumberOfPages();
+            pdfReader.Close();
+            document.Close();
+            return pageNum;
+        }
         public List<WatermarkFound> PdfiumSearchWartermark(string fileName, string[] warterMark, out string msg)
         {
             try
@@ -73,6 +98,10 @@ namespace pdfRemoveWaterMark
                 PdfDocument document = new PdfDocument(pdfReader);
                 for (int pageNum = 1; pageNum <= document.GetNumberOfPages(); pageNum++)
                 {
+                    if (!IsPageInPageRange(pageNum))
+                    {
+                        continue;
+                    }
                     PdfPage pdfPage = document.GetPage(pageNum);
 
                     // 创建文本提取策略
@@ -193,6 +222,10 @@ namespace pdfRemoveWaterMark
             PdfDocument oriFileDocument = new PdfDocument(new PdfReader(oriFileName));
             for (int pageNum = 1; pageNum <= oriFileDocument.GetNumberOfPages(); pageNum++)
             {
+                if (!IsPageInPageRange(pageNum))
+                {
+                    continue;
+                }
                 string onePageFilePath = System.IO.Path.Combine(removedWarterMarkFolder, $"{pageNum}.pdf");
                 PdfDocument onePageDoc = new PdfDocument(new PdfReader(onePageFilePath));
 
@@ -207,7 +240,7 @@ namespace pdfRemoveWaterMark
             return true;
         }
 
-        static void CopyOutlines(PdfDocument sourcePdf, PdfOutline sourceOutline, PdfDocument targetDocument, PdfOutline targetPdfOutlines)
+        void CopyOutlines(PdfDocument sourcePdf, PdfOutline sourceOutline, PdfDocument targetDocument, PdfOutline targetPdfOutlines)
         {
             if (sourceOutline != null)
             {
@@ -236,15 +269,18 @@ namespace pdfRemoveWaterMark
             }
         }
 
-        static int GetPageNumberByTitle(string title, PdfDocument pdfDocument)
+        int GetPageNumberByTitle(string title, PdfDocument pdfDocument)
         {
             if (string.IsNullOrEmpty(title))
             {
                 return -1; // 未找到匹配的页码
             }
-            int pageCount = pdfDocument.GetNumberOfPages();
-            for (int i = 1; i <= pageCount; i++)
+            for (int i = 1; i <= pdfDocument.GetNumberOfPages(); i++)
             {
+                if (!IsPageInPageRange(i))
+                {
+                    continue;
+                }
                 PdfPage pdfPage = pdfDocument.GetPage(i);
                 IList<PdfOutline> outlineList = pdfPage.GetOutlines(false);
                 if (outlineList != null)

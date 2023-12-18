@@ -30,6 +30,26 @@ namespace pdfRemoveWaterMark
             IniHelper iniHelper = new IniHelper();
             iniHelper.IniLoader2Form(this);
             tb_log.Clear();
+
+            string pageModeString = iniHelper.getString(this.Text, pageModeFiled, string.Empty);
+            try
+            {
+                if (bool.Parse(pageModeString))
+                {
+                    rb_all.Checked = true;
+                    rb_range.Checked = false;
+                }
+                else
+                {
+                    rb_all.Checked = false;
+                    rb_range.Checked = true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void AbordWorkThread()
@@ -47,6 +67,8 @@ namespace pdfRemoveWaterMark
 
             }
         }
+        private int g_pageMode = 0;
+        private const string pageModeFiled = "PAGE_NUMER_ALL";
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             IniHelper iniHelper = new IniHelper();
@@ -54,6 +76,8 @@ namespace pdfRemoveWaterMark
             AbordWorkThread();
             string[] excludeName = { tb_log.Name };
             iniHelper.IniUpdate2File(this, excludeName);
+
+            iniHelper.writeString(this.Text, pageModeFiled, rb_all.Checked.ToString());
         }
 
         private class ImageRectArea
@@ -373,13 +397,55 @@ namespace pdfRemoveWaterMark
             process.WaitForInputIdle(); // 等待资源管理器启动
             process.Close();
         }
+        private List<int> GetPageRange(string fileName, int pageNumber, List<int> pageRange)
+        {
+            pageRange.Clear();
+            if (rb_all.Checked)
+            {
+                for (int i = 1; i <= pageNumber; i++)
+                {
+                    pageRange.Add(i);
+                }
+            }
+            else if (rb_range.Checked)
+            {
+                string inputPageString = tb_Range.Text;
+                string[] groups = inputPageString.Split(',');
+                foreach (string group in groups)
+                {
+                    int start, end;
+                    string[] item = group.Split('-');
+                    switch (item.Length)
+                    {
+                        case 1:
+                            start = int.Parse(item[0]);
+                            end = start;
+                            break;
+                        case 2:
+                            start = int.Parse(item[0]);
+                            end = int.Parse(item[1]);
+                            break;
+                        default:
+                            continue;
+                    }
+                    for (int i = start; i <= end; i++)
+                    {
+                        pageRange.Add(i);
+                    }
+                }
+            }
+            return pageRange;
+        }
         private void mainWork(object fileNameObj)
         {
             //string fileName = @"E:\3Proj\16NS109\CPLD\pdf\try\电源DC-DC_01_12_07.pdf";
             Thread.Sleep(50);
+
             string fileName = fileNameObj.ToString();
             Pdfium pdfium = new Pdfium(AppendLog);
             string msg;
+            int pageNumber = pdfium.PdfiumGetPageNumber(fileName);
+            GetPageRange(fileName, pageNumber, pdfium.pageRange);
             AppendLog("step 1: search Wartermark");
             string[] warterMark = GetWarterMarkListFromUI();
             List<WatermarkFound> watermarkFoundList = pdfium.PdfiumSearchWartermark(fileName, warterMark, out msg);
@@ -434,6 +500,12 @@ namespace pdfRemoveWaterMark
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        private void rb_CheckedChanged(object sender, EventArgs e)
+        {
+            //RadioButton rb = (RadioButton)sender;
+            tb_Range.Enabled = rb_range.Checked;
         }
     }
 }

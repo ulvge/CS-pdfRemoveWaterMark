@@ -49,9 +49,14 @@ namespace pdfRemoveWaterMark
             this.tb_log = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.button2 = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.rb_range = new System.Windows.Forms.RadioButton();
+            this.rb_all = new System.Windows.Forms.RadioButton();
+            this.tb_Range = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // tb_fileRoot
@@ -99,7 +104,7 @@ namespace pdfRemoveWaterMark
             // 
             this.groupBox1.Controls.Add(this.cb_isText);
             this.groupBox1.Controls.Add(this.tb_warterMark);
-            this.groupBox1.Location = new System.Drawing.Point(34, 96);
+            this.groupBox1.Location = new System.Drawing.Point(34, 142);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(375, 100);
             this.groupBox1.TabIndex = 6;
@@ -261,11 +266,56 @@ namespace pdfRemoveWaterMark
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.rb_range);
+            this.groupBox4.Controls.Add(this.rb_all);
+            this.groupBox4.Controls.Add(this.tb_Range);
+            this.groupBox4.Location = new System.Drawing.Point(40, 71);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(355, 56);
+            this.groupBox4.TabIndex = 32;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "指定页面";
+            // 
+            // rb_range
+            // 
+            this.rb_range.AutoSize = true;
+            this.rb_range.Location = new System.Drawing.Point(84, 24);
+            this.rb_range.Name = "rb_range";
+            this.rb_range.Size = new System.Drawing.Size(58, 19);
+            this.rb_range.TabIndex = 0;
+            this.rb_range.TabStop = true;
+            this.rb_range.Text = "范围";
+            this.rb_range.UseVisualStyleBackColor = true;
+            this.rb_range.CheckedChanged += new System.EventHandler(this.rb_CheckedChanged);
+            // 
+            // rb_all
+            // 
+            this.rb_all.AutoSize = true;
+            this.rb_all.Location = new System.Drawing.Point(20, 25);
+            this.rb_all.Name = "rb_all";
+            this.rb_all.Size = new System.Drawing.Size(58, 19);
+            this.rb_all.TabIndex = 0;
+            this.rb_all.TabStop = true;
+            this.rb_all.Text = "全部";
+            this.rb_all.UseVisualStyleBackColor = true;
+            this.rb_all.CheckedChanged += new System.EventHandler(this.rb_CheckedChanged);
+            // 
+            // tb_Range
+            // 
+            this.tb_Range.Location = new System.Drawing.Point(149, 18);
+            this.tb_Range.Margin = new System.Windows.Forms.Padding(4);
+            this.tb_Range.Name = "tb_Range";
+            this.tb_Range.Size = new System.Drawing.Size(199, 25);
+            this.tb_Range.TabIndex = 5;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1010, 450);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -283,6 +333,8 @@ namespace pdfRemoveWaterMark
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -310,6 +362,10 @@ namespace pdfRemoveWaterMark
         private System.Windows.Forms.CheckBox cb_isText;
         private System.Windows.Forms.CheckBox cb_isImage;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.RadioButton rb_range;
+        private System.Windows.Forms.RadioButton rb_all;
+        private System.Windows.Forms.TextBox tb_Range;
     }
 }
 
