@@ -308,6 +308,24 @@ namespace pdfRemoveWaterMark
                 MessageBox.Show("请先选择一个pdf文件");
             }
         }
+
+        /// <summary>
+        /// DragEnter事件中将拖动源中的数据链接到放置目标。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+
+        private void tb_fileRoot_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.All;
+            else e.Effect = DragDropEffects.None;
+        }
+        private void tb_fileRoot_DragDrop(object sender, DragEventArgs e)
+        {
+            //获取第一个文件名
+            string fileName = (e.Data.GetData(DataFormats.FileDrop, false) as String[])[0];
+            CreateBackgroundThreadWork(fileName);
+        }
         Thread g_threadMainWork = null;
         private void CreateBackgroundThreadWork(string fileName)
         {
@@ -349,55 +367,39 @@ namespace pdfRemoveWaterMark
             string fileName = fileNameObj.ToString();
             Pdfium pdfium = new Pdfium(AppendLog);
             string msg;
-            AppendLog("step 1: search Wartermark");
-            string[] warterMark = GetWarterMarkListFromUI();
-            List<WatermarkFound> watermarkFoundList = pdfium.PdfiumSearchWartermark(fileName, warterMark, out msg);
-            if (watermarkFoundList.Count == 0)
-            {
-                AppendLog(msg);
-                return;
-            }
-            AppendLog("\tsearched Wartermark count:" + watermarkFoundList[0].warterMarkBounds.Count);
-            AppendLog("step 2: split");
-            if (pdfium.PdfiumSplit(g_splitTempFolder, fileName, out msg) == false)
-            {
-                AppendLog(msg);
-                return;
-            }
-            AppendLog("\tsplit success");
-            AppendLog("step 3: remove Water Mark");
-            if (Patagames_removeWaterMarkOneByOne(warterMark, watermarkFoundList, out msg) == false)
-            {
-                AppendLog(msg);
-                return;
-            }
+            //AppendLog("step 1: search Wartermark");
+            //string[] warterMark = GetWarterMarkListFromUI();
+            //List<WatermarkFound> watermarkFoundList = pdfium.PdfiumSearchWartermark(fileName, warterMark, out msg);
+            //if (watermarkFoundList.Count == 0)
+            //{
+            //    AppendLog(msg);
+            //    return;
+            //}
+            //AppendLog("\tsearched Wartermark count:" + watermarkFoundList[0].warterMarkBounds.Count);
+            //AppendLog("step 2: split");
+            //if (pdfium.PdfiumSplit(g_splitTempFolder, fileName, out msg) == false)
+            //{
+            //    AppendLog(msg);
+            //    return;
+            //}
+            //AppendLog("\tsplit success");
+            //AppendLog("step 3: remove Water Mark");
+            //if (Patagames_removeWaterMarkOneByOne(warterMark, watermarkFoundList, out msg) == false)
+            //{
+            //    AppendLog(msg);
+            //    return;
+            //}
             AppendLog("step 4: merge");
-            string directory = Path.GetDirectoryName(fileName);
-            if (pdfium.PdfiumMerge(g_removedTempFolder, directory, fileName, out msg) == false)
+            if (pdfium.PdfiumMerge(g_removedTempFolder, fileName, out msg) == false)
             {
                 AppendLog(msg);
                 return;
             }
+            AppendLog("step 5: add outline");
+
             AppendLog("finished success");
         }
 
-        /// <summary>
-        /// DragEnter事件中将拖动源中的数据链接到放置目标。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-
-        private void tb_fileRoot_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.All;
-            else e.Effect = DragDropEffects.None;
-        }
-        private void tb_fileRoot_DragDrop(object sender, DragEventArgs e)
-        {
-            //获取第一个文件名
-            string fileName = (e.Data.GetData(DataFormats.FileDrop, false) as String[])[0];
-            CreateBackgroundThreadWork(fileName);
-        }
 
     }
 }

@@ -218,8 +218,8 @@ namespace pdfRemoveWaterMark
                 AddOutlineItem(pdfDocument, childOutline, $"Section {pageNumber + 1}", pageNumber + 1);
             }
         }
-
-        static void CopyOutlines(PdfDocument sourcePdf, PdfOutline sourceOutline, PdfDocument targetDocument)
+        
+        static void CopyOutlines(PdfOutline sourceOutline, PdfDocument targetDocument)
         {
             if (sourceOutline != null)
             {
@@ -230,8 +230,7 @@ namespace pdfRemoveWaterMark
                 PdfOutline targetOutline = targetDocument.GetOutlines(false).AddOutline(title);
 
                 // 获取大纲项的目标页码
-                int pageNumber = GetPageNumberByTitle(title, sourcePdf);
-                //int pageNumber = GetPageNumByOutline(sourcePdf, 1, );
+                int pageNumber = GetPageNumberByTitle(title, targetDocument);
 
                 if (pageNumber > 0)
                 {
@@ -243,8 +242,8 @@ namespace pdfRemoveWaterMark
                 // 递归处理子目录项
                 foreach (var childSourceOutline in sourceOutline.GetAllChildren())
                 {
-                    targetOutline.AddOutline(childSourceOutline.GetTitle());
-                    CopyOutlines(sourcePdf, childSourceOutline, targetDocument);
+                    PdfOutline childTargetOutline = targetOutline.AddOutline(childSourceOutline.GetTitle());
+                    CopyOutlines(childSourceOutline, targetDocument);
                 }
             }
         }
@@ -258,17 +257,22 @@ namespace pdfRemoveWaterMark
             int pageCount = pdfDocument.GetNumberOfPages();
             for (int i = 1; i <= pageCount; i++)
             {
-                PdfPage pdfPage = pdfDocument.GetPage(i);
-                IList<PdfOutline> outlineList = pdfPage.GetOutlines(false);
-                if (outlineList != null)
+                try
                 {
-                    foreach (PdfOutline pdfOutline in outlineList)
+                    object obj = pdfDocument.GetPage(i).GetPdfObject().Get(PdfName.Title);
+                    if (obj == null)
                     {
-                        if (pdfOutline.GetTitle().Equals(title))
-                        {
-                            return i;
-                        }
+                        continue;
                     }
+                    string pageTitle = obj.ToString();
+                    if (title.Equals(pageTitle, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return i;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
                 }
             }
             return -1; // 未找到匹配的页码
@@ -280,9 +284,70 @@ namespace pdfRemoveWaterMark
             PdfOutline sourcePdfOutlines = sourcePdf.GetOutlines(false);
             PdfOutline targetPdfOutlines = targetPdf.GetOutlines(true);
 
+            //PdfDestination pdfDestination = sourcePdfOutlines.GetDestination();
+            //targetPdfOutlines.AddDestination(pdfDestination);
+            //targetPdfOutlines.AddOutline(sourcePdfOutlines);
+
+            //PdfNameTree sourceTree = sourcePdf.GetCatalog().GetNameTree(PdfName.Dests);
+            //IDictionary<PdfString, PdfObject> dests = sourceTree.GetNames();
+
+
+            //IList<iText.Kernel.Pdf.PdfOutline> sourceBookmarks = sourcePdfOutlines.GetAllChildren();
+            //IList<iText.Kernel.Pdf.PdfOutline> children = sourcePdfOutlines.GetAllChildren();
+            //foreach (PdfOutline child in children)
+            //{
+            //    targetPdfOutlines.AddOutline(child);
+            //}
             // 复制源PDF文档的大纲到新文档
-            CopyOutlines(sourcePdf, sourcePdfOutlines, targetPdf);
+            CopyOutlines(sourcePdfOutlines, targetPdf);
             Console.WriteLine("Outlines copied successfully.");
+        }
+        /// <summary>
+        /// read outline from oriFileName , copy to mergeFileName
+        /// </summary>
+        /// <param name="oriFileName"></param>
+        /// <param name="mergeFileName"></param>
+        /// <param name="msg"></param>
+        /// <returns></returns>
+        public bool PdfiumCreateOutLine(string oriFileName, string mergeFileName, out string msg)
+        {
+            msg = string.Empty;
+            if (!File.Exists(oriFileName))
+            {
+                return false;
+            }
+            if (!File.Exists(mergeFileName))
+            {
+                return false;
+            }
+
+            //string outputPdfFolder = System.IO.Path.GetDirectoryName(mergeFileName);
+            //string oriFileNameOnly = System.IO.Path.GetFileNameWithoutExtension(oriFileName);
+            //string outputFileName = System.IO.Path.Combine(outputPdfFolder, $"{oriFileNameOnly}_{DateTime.Now.ToString("yyyy_MM_dd-HHmmss")}.pdf");
+
+
+
+            PdfDocument targetPdf = new PdfDocument(new PdfWriter(mergeFileName));
+            targetPdf.InitializeOutlines();
+            PdfDocument sourcePdf = new PdfDocument(new PdfReader(oriFileName));
+            sourcePdf.InitializeOutlines();
+
+            PdfOutline sourcePdfOutlines = sourcePdf.GetOutlines(false);
+            PdfOutline targetPdfOutlines = targetPdf.GetOutlines(false);
+            targetPdfOutlines.AddOutline(sourcePdfOutlines);
+
+
+
+
+            int sourcePdfLength = sourcePdf.GetNumberOfPages();
+            /// read outline from oriFileName , copy to mergeFileName
+            /// 
+            sourcePdf.CopyPagesTo(3, sourcePdfLength, targetPdf);
+            sourcePdf.CopyPagesTo(1, 2, targetPdf);
+            sourcePdf.Close();
+            targetPdf.Close();
+
+            return true;
         }
     }
 }
