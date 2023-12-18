@@ -411,7 +411,9 @@ namespace pdfRemoveWaterMark
             AppendLog("step 5: add outline");
 
             AppendLog("finished success");
-            OpenPath(msg);
+
+            string outputPdfFolder = Path.GetDirectoryName(msg);
+            OpenPath(outputPdfFolder);
         }
 
 

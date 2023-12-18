@@ -165,15 +165,8 @@ namespace pdfRemoveWaterMark
                 return new iText.Kernel.Geom.Rectangle(renderInfo.GetDescentLine().GetBoundingRectangle());
             }
         }
-
-        public bool PdfiumMerge(string removedWarterMarkFolder, string oriFileName, out string msg)
+        private string GetNewFileName(string oriFileName)
         {
-            msg = string.Empty;
-            if (!Directory.Exists(removedWarterMarkFolder))
-            {
-                return false;
-            }
-
             string outputPdfFolder = System.IO.Path.GetDirectoryName(oriFileName);
             if (!Directory.Exists(outputPdfFolder))
             {
@@ -181,8 +174,20 @@ namespace pdfRemoveWaterMark
             }
             string oriFileNameOnly = System.IO.Path.GetFileNameWithoutExtension(oriFileName);
             string outputFileName = System.IO.Path.Combine(outputPdfFolder, $"{oriFileNameOnly}_{DateTime.Now.ToString("yyyy_MM_dd-HHmmss")}.pdf");
+            return outputFileName;
+        }
+        public bool PdfiumMerge(string removedWarterMarkFolder, string oriFileName, out string msg)
+        {
+            msg = string.Empty;
+            if (!Directory.Exists(removedWarterMarkFolder))
+            {
+                return false;
+            }
+            string outputFileName = GetNewFileName(oriFileName);
 
             PdfWriter pdfWriter = new PdfWriter(outputFileName);
+            pdfWriter.SetSmartMode(true);
+            pdfWriter.SetCompressionLevel(CompressionConstants.BEST_SPEED);
             PdfDocument pdfDocSave = new PdfDocument(pdfWriter);
             PdfMerger merger = new PdfMerger(pdfDocSave).SetCloseSourceDocuments(true);
             PdfDocument oriFileDocument = new PdfDocument(new PdfReader(oriFileName));
@@ -198,7 +203,7 @@ namespace pdfRemoveWaterMark
             merger.Close();
             pdfDocSave.Close();
             oriFileDocument.Close();
-            msg = outputPdfFolder;
+            msg = outputFileName;
             return true;
         }
 
