@@ -36,8 +36,8 @@ namespace pdfRemoveWaterMark
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cb_isText = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.cb_isImage = new System.Windows.Forms.CheckBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -55,6 +55,7 @@ namespace pdfRemoveWaterMark
             this.tb_Range = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.SuspendLayout();
@@ -119,11 +120,12 @@ namespace pdfRemoveWaterMark
             this.cb_isText.TabIndex = 6;
             this.cb_isText.Text = "水印是文本";
             this.cb_isText.UseVisualStyleBackColor = true;
+            this.cb_isText.CheckedChanged += new System.EventHandler(this.cb_isText_CheckedChanged);
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.pictureBox1);
             this.groupBox2.Controls.Add(this.cb_isImage);
-            this.groupBox2.Controls.Add(this.textBox2);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label5);
@@ -138,6 +140,20 @@ namespace pdfRemoveWaterMark
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.Image = global::pdfRemoveWaterMark.Properties.Resources.wh;
+            this.pictureBox1.InitialImage = null;
+            this.pictureBox1.Location = new System.Drawing.Point(17, 28);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(301, 90);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 7;
+            this.pictureBox1.TabStop = false;
+            // 
             // cb_isImage
             // 
             this.cb_isImage.AutoSize = true;
@@ -147,20 +163,12 @@ namespace pdfRemoveWaterMark
             this.cb_isImage.TabIndex = 6;
             this.cb_isImage.Text = "水印是图片";
             this.cb_isImage.UseVisualStyleBackColor = true;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(17, 25);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(4);
-            this.textBox2.Multiline = true;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(283, 93);
-            this.textBox2.TabIndex = 5;
+            this.cb_isImage.CheckedChanged += new System.EventHandler(this.cb_isImage_CheckedChanged);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(308, 97);
+            this.label4.Location = new System.Drawing.Point(365, 76);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(67, 15);
@@ -170,7 +178,7 @@ namespace pdfRemoveWaterMark
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(308, 49);
+            this.label3.Location = new System.Drawing.Point(365, 28);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(67, 15);
@@ -180,7 +188,7 @@ namespace pdfRemoveWaterMark
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(164, 129);
+            this.label5.Location = new System.Drawing.Point(218, 129);
             this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(67, 15);
@@ -199,7 +207,7 @@ namespace pdfRemoveWaterMark
             // 
             // w_max
             // 
-            this.w_max.Location = new System.Drawing.Point(235, 126);
+            this.w_max.Location = new System.Drawing.Point(289, 126);
             this.w_max.Margin = new System.Windows.Forms.Padding(4);
             this.w_max.Name = "w_max";
             this.w_max.Size = new System.Drawing.Size(65, 25);
@@ -215,7 +223,7 @@ namespace pdfRemoveWaterMark
             // 
             // h_min
             // 
-            this.h_min.Location = new System.Drawing.Point(383, 39);
+            this.h_min.Location = new System.Drawing.Point(368, 47);
             this.h_min.Margin = new System.Windows.Forms.Padding(4);
             this.h_min.Name = "h_min";
             this.h_min.Size = new System.Drawing.Size(54, 25);
@@ -223,7 +231,7 @@ namespace pdfRemoveWaterMark
             // 
             // h_max
             // 
-            this.h_max.Location = new System.Drawing.Point(383, 87);
+            this.h_max.Location = new System.Drawing.Point(368, 93);
             this.h_max.Margin = new System.Windows.Forms.Padding(4);
             this.h_max.Name = "h_max";
             this.h_max.Size = new System.Drawing.Size(54, 25);
@@ -331,6 +339,7 @@ namespace pdfRemoveWaterMark
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -348,7 +357,6 @@ namespace pdfRemoveWaterMark
         private System.Windows.Forms.TextBox tb_warterMark;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox h_min;
@@ -366,6 +374,7 @@ namespace pdfRemoveWaterMark
         private System.Windows.Forms.RadioButton rb_range;
         private System.Windows.Forms.RadioButton rb_all;
         private System.Windows.Forms.TextBox tb_Range;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 

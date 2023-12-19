@@ -57,6 +57,8 @@ namespace pdfRemoveWaterMark
             {
                 Console.WriteLine(ex.Message);
             }
+            cb_isText_CheckedChanged(cb_isText, null);
+            cb_isImage_CheckedChanged(cb_isImage, null);
         }
 
         private void AbordWorkThread()
@@ -558,6 +560,21 @@ namespace pdfRemoveWaterMark
         {
             //RadioButton rb = (RadioButton)sender;
             tb_Range.Enabled = rb_range.Checked;
+        }
+
+        private void cb_isText_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox cb = (CheckBox)sender;
+            tb_warterMark.Enabled = cb.Checked;
+        }
+
+        private void cb_isImage_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox cb = (CheckBox)sender;
+            w_min.Enabled = cb.Checked;
+            w_max.Enabled = cb.Checked;
+            h_min.Enabled = cb.Checked;
+            h_max.Enabled = cb.Checked;
         }
     }
 }
