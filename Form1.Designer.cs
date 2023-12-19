@@ -29,6 +29,7 @@ namespace pdfRemoveWaterMark
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tb_fileRoot = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
@@ -223,7 +224,7 @@ namespace pdfRemoveWaterMark
             // 
             // h_min
             // 
-            this.h_min.Location = new System.Drawing.Point(368, 47);
+            this.h_min.Location = new System.Drawing.Point(370, 47);
             this.h_min.Margin = new System.Windows.Forms.Padding(4);
             this.h_min.Name = "h_min";
             this.h_min.Size = new System.Drawing.Size(54, 25);
@@ -231,7 +232,7 @@ namespace pdfRemoveWaterMark
             // 
             // h_max
             // 
-            this.h_max.Location = new System.Drawing.Point(368, 93);
+            this.h_max.Location = new System.Drawing.Point(370, 93);
             this.h_max.Margin = new System.Windows.Forms.Padding(4);
             this.h_max.Name = "h_max";
             this.h_max.Size = new System.Drawing.Size(54, 25);
@@ -247,7 +248,7 @@ namespace pdfRemoveWaterMark
             this.tb_log.Multiline = true;
             this.tb_log.Name = "tb_log";
             this.tb_log.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tb_log.Size = new System.Drawing.Size(485, 371);
+            this.tb_log.Size = new System.Drawing.Size(680, 371);
             this.tb_log.TabIndex = 30;
             // 
             // groupBox3
@@ -258,7 +259,7 @@ namespace pdfRemoveWaterMark
             this.groupBox3.Controls.Add(this.tb_log);
             this.groupBox3.Location = new System.Drawing.Point(496, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(499, 403);
+            this.groupBox3.Size = new System.Drawing.Size(694, 403);
             this.groupBox3.TabIndex = 31;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "日志";
@@ -322,7 +323,8 @@ namespace pdfRemoveWaterMark
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1010, 450);
+            this.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.ClientSize = new System.Drawing.Size(1205, 450);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -331,8 +333,9 @@ namespace pdfRemoveWaterMark
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "pdfRemoveWaterMark";
+            this.Text = "pdf去水印";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);

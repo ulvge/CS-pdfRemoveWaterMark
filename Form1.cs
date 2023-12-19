@@ -32,11 +32,34 @@ namespace pdfRemoveWaterMark
             InitializeComponent();
         }
 
+        private void AddUsage()
+        {
+            AppendLog("帮助：");
+            AppendLog("\t本软件可去除pdf水印，支持水印类型，文本和图片");
+            //AppendLog(Environment.NewLine);
+            AppendLog("关于指定页面：");
+            AppendLog("\t可指定想要处理的文件页面，而非全部");
+            AppendLog("\t指定范围格式和其它方法通用，1,2,4-6：表示处理第1、2、4、5、6页");
+            //AppendLog(Environment.NewLine);
+            AppendLog("关于水印是文本：");
+            AppendLog("\t如果是水印是文本类型，可一次性去除多条文本，用换行隔开");
+            //AppendLog(Environment.NewLine);
+            AppendLog("关于水印是图片：");
+            AppendLog("\t如果是图片，需要提前设定图片范围，长宽通常在100~800之间。");
+            AppendLog("\t也可通过日志，确认去除的内容信息。");
+            AppendLog("\t处理完成后，会自动打开新文件所在的目录，新文件名：原文件名+日期+时间");
+            AppendLog("\t同时会在这个目录下面，生成一个tempImages__的子文件夹。");
+            AppendLog("\t会将pdf文档中，已经去掉的图片保存下来");
+            AppendLog("\t图片文件夹名中的宽高参数，可依需要进行调整，确保是想去除的内容");
+            AppendLog("\t1_0--wh_401x260.png,表示第1页的第0个水印，宽是401,高是260");
+
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
             IniHelper iniHelper = new IniHelper();
             iniHelper.IniLoader2Form(this);
             tb_log.Clear();
+            AddUsage();
 
             string pageModeString = iniHelper.getString(this.Text, pageModeFiled, string.Empty);
             try
