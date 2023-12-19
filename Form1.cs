@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,8 +19,14 @@ namespace pdfRemoveWaterMark
 {
     public partial class Form1 : Form
     {
-        private const string g_splitTempFolder = "pdfSplit__";
-        private const string g_removedTempFolder = "removed__";
+        private const string TEMP_SPLIT = "tempSplit__";
+        private const string TEMP_PURE = "tempRemoved__";
+        private const string TEMP_IMAGES = "tempImages__";
+        string g_outputPdfFolder = string.Empty;
+        string g_outputFileName = string.Empty;
+        string g_outputImagePath = string.Empty;
+        private int g_pageNumber = 0;
+
         public Form1()
         {
             InitializeComponent();
@@ -67,7 +74,6 @@ namespace pdfRemoveWaterMark
 
             }
         }
-        private int g_pageMode = 0;
         private const string pageModeFiled = "PAGE_NUMER_ALL";
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -192,40 +198,50 @@ namespace pdfRemoveWaterMark
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine(ex.Message);
             }
+        }
+        private string GetOutputNewFileName(string oriFileName)
+        {
+            string outputPdfFolder = System.IO.Path.GetDirectoryName(oriFileName);
+            if (!Directory.Exists(outputPdfFolder))
+            {
+                Directory.CreateDirectory(outputPdfFolder);
+            }
+            string oriFileNameOnly = System.IO.Path.GetFileNameWithoutExtension(oriFileName);
+            string outputFileName = System.IO.Path.Combine(outputPdfFolder, $"{oriFileNameOnly}_{DateTime.Now.ToString("yyyy_MM_dd-HHmmss")}.pdf");
+            return outputFileName;
         }
         /// <summary>
         /// 删除 水印
         /// </summary>
         /// <param oriFileName="name"></param>
-        private bool Patagames_removeWaterMarkOneByOne(string[] warterMark, List<WatermarkFound> watermarkFounds, out string msg)
+        private bool Patagames_removeWaterMarkOneByOne(string[] textWarterMark, ImageRectArea imageRectAreaWarterMark, List<WatermarkFound> watermarkFounds, Pdfium pdfium, out string msg)
         {
-            ImageRectArea imageRectArea = new ImageRectArea(w_min.Text, w_max.Text, h_min.Text, h_max.Text);
             msg = string.Empty;
-            if (!Directory.Exists(g_splitTempFolder))
+            if (!Directory.Exists(TEMP_SPLIT))
             {
                 return false;
             }
-            if (!Directory.Exists(g_removedTempFolder))
+            if (!Directory.Exists(TEMP_PURE))
             {
-                Directory.CreateDirectory(g_removedTempFolder);
+                Directory.CreateDirectory(TEMP_PURE);
             }
             try
             {
-                for (int pageNum = 1; pageNum <= watermarkFounds.Count; pageNum++)
-                {
-                    int removeCount = 0;
-                    bool isTextMatchSuccess = false;
-                    string splitPdfFilePath = Path.Combine(g_splitTempFolder, $"{pageNum}.pdf");
-                    string outputPdfFilePath = Path.Combine(g_removedTempFolder, $"{pageNum}.pdf");
-                    PdfDocument document = PdfDocument.Load(splitPdfFilePath);
-                    PdfPage pageObj = document.Pages[0]; // only one
-                    WatermarkFound targetWatermarkFound = watermarkFounds.FirstOrDefault(w => w.page == pageNum);
-                    if (targetWatermarkFound == null)
+                for (int pageNum = 1; pageNum <= g_pageNumber; pageNum++)
+                { 
+                    if (!pdfium.IsPageInPageRange(pageNum))
                     {
                         continue;
                     }
+                    int removeCount = 0;
+                    bool isTextMatchSuccess = false;
+                    string splitPdfFilePath = Path.Combine(TEMP_SPLIT, $"{pageNum}.pdf");
+                    string outputPdfFilePath = Path.Combine(TEMP_PURE, $"{pageNum}.pdf");
+                    PdfDocument document = PdfDocument.Load(splitPdfFilePath);
+                    PdfPage pageObj = document.Pages[0]; // only one
+                    WatermarkFound targetWatermarkFound = watermarkFounds.FirstOrDefault(w => w.page == pageNum);
 
                     for (int j = pageObj.PageObjects.Count - 1; j >= 0; j--)
                     {
@@ -233,10 +249,14 @@ namespace pdfRemoveWaterMark
                         PointF outTolerance = new PointF(0, 0);
                         if (cb_isText.Checked)
                         {
+                            if (targetWatermarkFound == null)
+                            {
+                                continue;
+                            }
                             try
                             {
                                 string objText = ((PdfTextObject)pageObj.PageObjects[j]).TextUnicode;
-                                if (IsMatchTextConect(objText, warterMark))
+                                if (IsMatchTextConect(objText, textWarterMark))
                                 {
                                     removeCount++;
                                     AppendLog($"\tpages: {pageNum} text Conect, Remove :{objText}");
@@ -251,7 +271,7 @@ namespace pdfRemoveWaterMark
                             if ((isTextMatchSuccess == false) && IsMatchTextRect(rect, targetWatermarkFound, out outTolerance, 50, 0.1f))
                             {
                                 removeCount++;
-                                AppendLog($"\tpages: {pageNum} text rect, Remove:  search rect.w h : {(int)rect.Width}, {(int)rect.Height}" +
+                                AppendLog($"\tpages: {pageNum} text rect, Remove:  search rect.w h : {(int)rect.Width} x {(int)rect.Height}" +
                                     $", outTolerance:{ outTolerance.X },{ outTolerance.Y }");
                                 pageObj.PageObjects.RemoveAt(j);
                             }
@@ -263,9 +283,10 @@ namespace pdfRemoveWaterMark
                         }
                         else if (cb_isImage.Checked)
                         {
-                            if (IsMatchImageRect(rect, imageRectArea)) { 
+                            if (IsMatchImageRect(rect, imageRectAreaWarterMark)) { 
                                 removeCount++;
                                 AppendLog($"\tpages: {pageNum} image , Remove At Ojbect: {j} , search rect.w h : {(int)rect.Width}, {(int)rect.Height}");
+                                SaveTheRemovedImage(pageObj.PageObjects, pageNum, j, g_outputImagePath);
                                 pageObj.PageObjects.RemoveAt(j);
                             }
                         }
@@ -302,6 +323,25 @@ namespace pdfRemoveWaterMark
             }
             return true;
         }
+
+        private void SaveTheRemovedImage(PdfPageObjectsCollection pageObjects, int page, int idx, string savePath)
+        {
+            if (!Directory.Exists(savePath))
+            {
+                Directory.CreateDirectory(savePath);
+            }
+
+            PdfPageObject objectToSave = pageObjects[idx];
+            PdfImageObject imageObject = objectToSave as PdfImageObject;
+            if (imageObject == null)
+                return; //if not an image object then nothing do
+
+            //Save image to disk
+            string fileName = page + "_" + idx + "--wh_" + (int)imageObject.BoundingBox.Width + "x" + (int)imageObject.BoundingBox.Height;
+            var path = string.Format(savePath + "\\"+ fileName + ".png");
+            imageObject.Bitmap.Image.Save(path, ImageFormat.Png);
+        }
+
         /// <summary>
         /// 选择 pdf 文件
         /// </summary>
@@ -444,56 +484,68 @@ namespace pdfRemoveWaterMark
             string fileName = fileNameObj.ToString();
             Pdfium pdfium = new Pdfium(AppendLog);
             string msg;
-            int pageNumber = pdfium.PdfiumGetPageNumber(fileName);
-            GetPageRange(fileName, pageNumber, pdfium.pageRange);
+            ClearWorkTemp(g_outputImagePath); // clear last record
+            g_outputPdfFolder = Path.GetDirectoryName(fileName);
+            g_outputImagePath = g_outputPdfFolder + "\\" + TEMP_IMAGES;
+            g_outputFileName = GetOutputNewFileName(fileName);
+
+
+            g_pageNumber = pdfium.PdfiumGetPageNumber(fileName);
+            GetPageRange(fileName, g_pageNumber, pdfium.pageRange);
             AppendLog("step 1: search Wartermark");
-            string[] warterMark = GetWarterMarkListFromUI();
-            List<WatermarkFound> watermarkFoundList = pdfium.PdfiumSearchWartermark(fileName, warterMark, out msg);
+            string[] textWarterMark = GetWarterMarkListFromUI();
+            List<WatermarkFound> watermarkFoundList = pdfium.PdfiumSearchWartermark(fileName, textWarterMark, out msg);
             if (watermarkFoundList.Count == 0)
             {
-                AppendLog(msg);
-                return;
+                if (cb_isText.Checked == true) { 
+                    AppendLog(msg);
+                    return;
+                }
             }
-            AppendLog("\tsearched Wartermark count:" + watermarkFoundList[0].warterMarkBounds.Count);
+            else
+            {
+                AppendLog("\tsearched Wartermark count:" + watermarkFoundList[0].warterMarkBounds.Count);
+            }
             AppendLog("step 2: split");
-            if (pdfium.PdfiumSplit(g_splitTempFolder, fileName, out msg) == false)
+            if (pdfium.PdfiumSplit(TEMP_SPLIT, fileName, out msg) == false)
             {
                 AppendLog(msg);
                 return;
             }
             AppendLog("\tsplit success");
             AppendLog("step 3: remove Water Mark");
-            if (Patagames_removeWaterMarkOneByOne(warterMark, watermarkFoundList, out msg) == false)
+            ImageRectArea imageRectAreaWarterMark = new ImageRectArea(w_min.Text, w_max.Text, h_min.Text, h_max.Text);
+            if (Patagames_removeWaterMarkOneByOne(textWarterMark, imageRectAreaWarterMark, watermarkFoundList, pdfium, out msg) == false)
             {
                 AppendLog(msg);
                 return;
             }
             AppendLog("step 4: merge");
-            if (pdfium.PdfiumMerge(g_removedTempFolder, fileName, out msg) == false)
+            if (pdfium.PdfiumMerge(TEMP_PURE, fileName, g_outputFileName, out msg) == false)
             {
                 AppendLog(msg);
                 return;
             }
             AppendLog("step 5: add outline");
 
-            ClearWorkTemp();
+            ClearWorkTemp(TEMP_SPLIT);
+            ClearWorkTemp(TEMP_PURE);
             AppendLog("finished success");
 
-            string outputPdfFolder = Path.GetDirectoryName(msg);
-            OpenPath(outputPdfFolder);
+            OpenPath(g_outputPdfFolder);
         }
 
-        private void ClearWorkTemp()
+        private void ClearWorkTemp(string path)
         {
             try
             {
-                if (Directory.Exists(g_splitTempFolder))
+                if (string.IsNullOrEmpty(path))
                 {
-                    Directory.Delete(g_splitTempFolder, true); // 删除目录及其所有子目录和文件
+                    return;
                 }
-                if (Directory.Exists(g_removedTempFolder))
+                if (Directory.Exists(path))
                 {
-                    Directory.Delete(g_removedTempFolder, true); // 删除目录及其所有子目录和文件
+                    Directory.Delete(path, true); // 删除目录及其所有子目录和文件
                 }
             }
             catch (Exception ex)

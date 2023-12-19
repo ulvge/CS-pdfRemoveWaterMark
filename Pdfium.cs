@@ -25,7 +25,7 @@ namespace pdfRemoveWaterMark
         {
             this.appendLog = appendLog;
         }
-        private bool IsPageInPageRange(int i)
+        public bool IsPageInPageRange(int i)
         {
             foreach (var item in pageRange)
             {
@@ -194,25 +194,13 @@ namespace pdfRemoveWaterMark
                 return new iText.Kernel.Geom.Rectangle(renderInfo.GetDescentLine().GetBoundingRectangle());
             }
         }
-        private string GetNewFileName(string oriFileName)
-        {
-            string outputPdfFolder = System.IO.Path.GetDirectoryName(oriFileName);
-            if (!Directory.Exists(outputPdfFolder))
-            {
-                Directory.CreateDirectory(outputPdfFolder);
-            }
-            string oriFileNameOnly = System.IO.Path.GetFileNameWithoutExtension(oriFileName);
-            string outputFileName = System.IO.Path.Combine(outputPdfFolder, $"{oriFileNameOnly}_{DateTime.Now.ToString("yyyy_MM_dd-HHmmss")}.pdf");
-            return outputFileName;
-        }
-        public bool PdfiumMerge(string removedWarterMarkFolder, string oriFileName, out string msg)
+        public bool PdfiumMerge(string removedWarterMarkFolder, string oriFileName, string outputFileName, out string msg)
         {
             msg = string.Empty;
             if (!Directory.Exists(removedWarterMarkFolder))
             {
                 return false;
             }
-            string outputFileName = GetNewFileName(oriFileName);
 
             PdfWriter pdfWriter = new PdfWriter(outputFileName);
             pdfWriter.SetSmartMode(true);
@@ -227,6 +215,10 @@ namespace pdfRemoveWaterMark
                     continue;
                 }
                 string onePageFilePath = System.IO.Path.Combine(removedWarterMarkFolder, $"{pageNum}.pdf");
+                if (!File.Exists(onePageFilePath))
+                {
+                    continue;
+                }
                 PdfDocument onePageDoc = new PdfDocument(new PdfReader(onePageFilePath));
 
                 merger.Merge(onePageDoc, 1, 1);
@@ -299,14 +291,21 @@ namespace pdfRemoveWaterMark
         }
         private void PdfiumAddOutLine(PdfDocument sourcePdf, PdfDocument targetPdf)
         {
-            sourcePdf.InitializeOutlines();
-            targetPdf.InitializeOutlines();
-            PdfOutline sourcePdfOutlines = sourcePdf.GetOutlines(false);
-            PdfOutline targetPdfOutlines = targetPdf.GetOutlines(true);
+            try
+            {
+                sourcePdf.InitializeOutlines();
+                targetPdf.InitializeOutlines();
+                PdfOutline sourcePdfOutlines = sourcePdf.GetOutlines(false);
+                PdfOutline targetPdfOutlines = targetPdf.GetOutlines(true);
 
-            // 复制源PDF文档的大纲到新文档
-            CopyOutlines(sourcePdf, sourcePdfOutlines, targetPdf, targetPdfOutlines);
-            Console.WriteLine("Outlines copied successfully.");
+                // 复制源PDF文档的大纲到新文档
+                CopyOutlines(sourcePdf, sourcePdfOutlines, targetPdf, targetPdfOutlines);
+                Console.WriteLine("Outlines copied successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }
