@@ -247,24 +247,25 @@ namespace pdfRemoveWaterMark
                 // 获取大纲项的标题
                 string title = sourceOutline.GetTitle();
 
-                // 在目标PDF文档中添加相应标题的大纲项
-                PdfOutline targetOutline = targetPdfOutlines.AddOutline(title);
+                PdfOutline targetOutline = null;
 
                 // 获取大纲项的目标页码
                 int pageNumber = GetPageNumberByTitle(title, sourcePdf);
-
-                if (pageNumber > 0)
+                if (pageNumber >= 0)
                 {
                     // 创建目标页的目标 createXYZ 
                     //PdfExplicitDestination destination = PdfExplicitDestination.CreateFit(targetDocument.GetPage(pageNumber));
-                    PdfExplicitDestination destination = PdfExplicitDestination.CreateXYZ(targetDocument.GetPage(pageNumber),300, 400, 1.2f);
+                    PdfExplicitDestination destination = PdfExplicitDestination.CreateXYZ(targetDocument.GetPage(pageNumber),300, 100, 1.2f);
+
+                    // 在目标PDF文档中添加相应标题的大纲项
+                    targetOutline = targetPdfOutlines.AddOutline(title);
                     targetOutline.AddDestination(destination);
                 }
-
                 // 递归处理子目录项
                 foreach (var childSourceOutline in sourceOutline.GetAllChildren())
                 {
-                    CopyOutlines(sourcePdf, childSourceOutline, targetDocument, targetOutline);
+                    PdfOutline childChildOutline = targetOutline != null ? targetOutline : targetPdfOutlines;
+                    CopyOutlines(sourcePdf, childSourceOutline, targetDocument, childChildOutline);
                 }
             }
         }
