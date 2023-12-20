@@ -14,14 +14,14 @@ using System.Threading.Tasks;
 
 namespace pdfRemoveWaterMark
 {
-    class Pdfium
+    class iText7
     {
         public List<WatermarkFound> wartermarkFoundBounds = new List<WatermarkFound>();
         public delegate void AppendLog(string arg, bool isDisplayUI = true);
         public List<int> pageRange = new List<int>();
         private AppendLog appendLog;
 
-        public Pdfium(AppendLog appendLog)
+        public iText7(AppendLog appendLog)
         {
             this.appendLog = appendLog;
         }
@@ -36,7 +36,7 @@ namespace pdfRemoveWaterMark
             }
             return false;
         }
-        public bool PdfiumSplit(string splitTempFolder, string oriFileName, out string msg)
+        public bool PdfSplit(string splitTempFolder, string oriFileName, out string msg)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace pdfRemoveWaterMark
             }
             return true;
         }
-        public int PdfiumGetPageNumber(string fileName)
+        public int PdfGetPageNumber(string fileName)
         {
             PdfReader pdfReader = new PdfReader(fileName);
             PdfDocument document = new PdfDocument(pdfReader);
@@ -90,7 +90,7 @@ namespace pdfRemoveWaterMark
             document.Close();
             return pageNum;
         }
-        public List<WatermarkFound> PdfiumSearchWartermark(string fileName, string[] warterMark, out string msg)
+        public List<WatermarkFound> PdfSearchWartermark(string fileName, string[] warterMark, out string msg)
         {
             try
             {   
@@ -128,7 +128,7 @@ namespace pdfRemoveWaterMark
             }
             catch (Exception ex)
             {
-                appendLog("PdfiumSearchWartermark" + ex.Message);
+                appendLog("PdfSearchWartermark" + ex.Message);
                 msg = ex.Message;
                 return null;
             }
@@ -194,7 +194,7 @@ namespace pdfRemoveWaterMark
                 return new iText.Kernel.Geom.Rectangle(renderInfo.GetDescentLine().GetBoundingRectangle());
             }
         }
-        public bool PdfiumMerge(string removedWarterMarkFolder, string oriFileName, string outputFileName, out string msg)
+        public bool PdfMerge(string removedWarterMarkFolder, string oriFileName, string outputFileName, out string msg)
         {
             msg = string.Empty;
             if (!Directory.Exists(removedWarterMarkFolder))
@@ -224,7 +224,7 @@ namespace pdfRemoveWaterMark
                 merger.Merge(onePageDoc, 1, 1);
                 appendLog("\tmerge pageNum " + pageNum);
             }
-            PdfiumAddOutLine(oriFileDocument, pdfDocSave);
+            PdfAddOutLine(oriFileDocument, pdfDocSave);
             merger.Close();
             pdfDocSave.Close();
             oriFileDocument.Close();
@@ -289,7 +289,7 @@ namespace pdfRemoveWaterMark
             }
             return -1; // 未找到匹配的页码
         }
-        private void PdfiumAddOutLine(PdfDocument sourcePdf, PdfDocument targetPdf)
+        private void PdfAddOutLine(PdfDocument sourcePdf, PdfDocument targetPdf)
         {
             try
             {
