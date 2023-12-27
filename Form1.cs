@@ -37,6 +37,7 @@ namespace pdfRemoveWaterMark
         {
             AppendLog("帮助：");
             AppendLog("\t本软件可去除pdf水印，支持水印类型，文本和图片");
+            AppendLog("\t本软件识别图片中的文本，开发阶段...");
             //AppendLog(Environment.NewLine);
             AppendLog("关于指定页面：");
             AppendLog("\t可指定想要处理的文件页面，而非全部");
@@ -59,6 +60,8 @@ namespace pdfRemoveWaterMark
         {
             IniHelper iniHelper = new IniHelper();
             iniHelper.IniLoader2Form(this);
+            g_selectedFileList = new string[1];
+            g_selectedFileList[0] = tb_fileRoot.Text;
             tb_log.Clear();
             AddUsage();
 
@@ -377,7 +380,7 @@ namespace pdfRemoveWaterMark
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Multiselect = false;
-            fileDialog.Filter = "PDF files (*.pdf)|*.pdf|All Files (*.*)|*.*";
+            fileDialog.Filter = "PDF files (*.pdf)|*.pdf|Image files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp";
             fileDialog.FilterIndex = 1;
             fileDialog.Multiselect = true;
 
@@ -391,7 +394,7 @@ namespace pdfRemoveWaterMark
         {
             if (g_selectedFileList == null || g_selectedFileList.Length == 0)
             {
-                MessageBox.Show("请先选择pdf文件");
+                MessageBox.Show("请先选择文件");
                 return;
             }
             ThreadMainWork(g_selectedFileList);
@@ -415,7 +418,7 @@ namespace pdfRemoveWaterMark
             tb_fileRoot.Text = g_selectedFileList[0];
         }
         Thread g_threadMainWork = null;
-        private void ThreadMainWork(string[] fileName)
+        private void ThreadMainWork(string[] fileNames)
         {
             try
             {
@@ -424,14 +427,17 @@ namespace pdfRemoveWaterMark
                 {
                     g_threadMainWork.Abort();
                 }
-                tb_fileRoot.Text = fileName[0];
-                if (fileName.Length == 1) { 
+                tb_fileRoot.Text = fileNames[0];
+                if (fileNames[0].EndsWith("*.pdf"))
+                {
                     g_threadMainWork = new Thread(new ParameterizedThreadStart(RemoveWaterMarkThreadWork));
-                    g_threadMainWork.Start(fileName[0]);
+                    g_threadMainWork.Start(fileNames[0]);
                 }
                 else
                 {
-
+                    RenameFiles renameFiles = new RenameFiles(AppendLog);
+                    g_threadMainWork = new Thread(new ParameterizedThreadStart(renameFiles.RenameFilesThread));
+                    g_threadMainWork.Start(fileNames);
                 }
             }
             catch (Exception ex)
