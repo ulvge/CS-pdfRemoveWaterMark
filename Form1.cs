@@ -23,6 +23,7 @@ namespace pdfRemoveWaterMark
         private const string TEMP_SPLIT = "tempSplit__";
         private const string TEMP_PURE = "tempRemoved__";
         private const string TEMP_IMAGES = "tempImages__";
+        private const int WARTERMARK_SEARCH_START_PAGE_NUM = 2;//首页有些比较 特殊
         string g_outputPdfFolder = string.Empty;
         string g_outputFileName = string.Empty;
         string g_outputImagePath = string.Empty;
@@ -253,7 +254,10 @@ namespace pdfRemoveWaterMark
         }
         private bool IsExistOverlap(FS_RECTF a, FS_RECTF b)
         {
-            if (a.Equals(b))
+            if (a.Equals(b)|| ((Math.Round(a.Height, 2) == Math.Round(b.Height, 2)) && (Math.Round(a.Width, 2) == Math.Round(b.Width, 2)) &&
+                (Math.Round(a.left, 2) == Math.Round(b.left, 2)) || (Math.Round(a.top, 2) == Math.Round(b.top, 2)) ||
+                (Math.Round(a.right, 2) == Math.Round(b.right, 2)) || (Math.Round(a.bottom, 2) == Math.Round(b.bottom, 2))
+                ))
             {
                 return true;
             }
@@ -273,7 +277,7 @@ namespace pdfRemoveWaterMark
             int validPageCount = 0;
             List<PdfPageObject> foundPageObj = new List<PdfPageObject>();
             PdfDocument baseDoc = null;
-            for (int pageNum = 1; pageNum <= g_pageNumber; pageNum++)
+            for (int pageNum = WARTERMARK_SEARCH_START_PAGE_NUM; pageNum <= g_pageNumber; pageNum++)
             {
                 if (!itext7.IsPageInPageRange(pageNum))
                 {
@@ -321,18 +325,17 @@ _exit:
         {
             foreach (PdfPageObject item in foundSameObject)
             {
-                if (pageObjects.ObjectType.Equals(item.ObjectType) && pageObjects.BoundingBox.Equals(item.BoundingBox))
+                if (pageObjects.ObjectType.Equals(item.ObjectType) && IsExistOverlap(pageObjects.BoundingBox, item.BoundingBox))
                 {
                     Color SetColor = ColorTools.ARGB2RGB(tb_color.Text);
                     float distance = ColorTools.RGBDistance(pageObjects.FillColor, SetColor);
-                    if (distance < 20)
+                    if (distance < 200)
                     {
                         Console.WriteLine("distance :" + distance);
                         return true;
                     }
 
                     Console.WriteLine("distance not:" + distance);
-                    return false;
                 }
             }
             return false;
@@ -369,7 +372,18 @@ _exit:
                     string splitPdfFilePath = Path.Combine(TEMP_SPLIT, $"{pageNum}.pdf");
                     string outputPdfFilePath = Path.Combine(TEMP_PURE, $"{pageNum}.pdf");
                     Console.WriteLine("start processing file: " + outputPdfFilePath);
-                    PdfDocument document = PdfDocument.Load(splitPdfFilePath);
+                    PdfDocument document;
+                    try
+                    {
+                        document = PdfDocument.Load(splitPdfFilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        File.Copy(splitPdfFilePath, outputPdfFilePath, true);
+                        AppendLog(string.Format("pages: {0} text , save error:{1}", pageNum, ex.Message));
+                        continue;
+                    }
+
                     PdfPage pageObj = document.Pages[0]; // only one
                     WatermarkFound targetWatermarkFound = watermarkFounds.FirstOrDefault(w => w.page == pageNum);
 
@@ -436,6 +450,7 @@ _exit:
                         {
                             if (SearchObjectFromSameFoundList(pageObj.PageObjects[j], foundSameObjectList))
                             {
+                                removeCount++;
                                 pageObj.PageObjects.RemoveAt(j);
                             }
                         }
@@ -458,11 +473,12 @@ _exit:
                     };
                     document.Save(Patagames.Pdf.Enums.SaveFlags.NoIncremental | Patagames.Pdf.Enums.SaveFlags.RemoveUnusedObjects);
                     document.Dispose();
+                    pageObj.Dispose();
                 }
             }
             catch (Exception ex)
             {
-                msg = ex.Message;
+                msg = ex.Message + ex.StackTrace;
                 return false;
             }
             return true;
@@ -485,6 +501,7 @@ _exit:
             string fileName = page + "_" + idx + "--wh_" + (int)imageObject.BoundingBox.Width + "x" + (int)imageObject.BoundingBox.Height;
             var path = string.Format(savePath + "\\"+ fileName + ".png");
             imageObject.Bitmap.Image.Save(path, ImageFormat.Png);
+            imageObject.Dispose();
             return true;
         }
 

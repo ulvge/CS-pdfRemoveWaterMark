@@ -206,29 +206,55 @@ namespace pdfRemoveWaterMark
             PdfWriter pdfWriter = new PdfWriter(outputFileName);
             pdfWriter.SetSmartMode(true);
             pdfWriter.SetCompressionLevel(CompressionConstants.BEST_SPEED);
-            PdfDocument pdfDocSave = new PdfDocument(pdfWriter);
-            PdfMerger merger = new PdfMerger(pdfDocSave).SetCloseSourceDocuments(true);
-            PdfDocument oriFileDocument = new PdfDocument(new PdfReader(oriFileName));
-            for (int pageNum = 1; pageNum <= oriFileDocument.GetNumberOfPages(); pageNum++)
+            //PdfDocument pdfDocSave = new PdfDocument(pdfWriter);
+            using (PdfDocument pdfDocSave = new PdfDocument(pdfWriter))
             {
-                if (!IsPageInPageRange(pageNum))
+                PdfMerger merger = new PdfMerger(pdfDocSave).SetCloseSourceDocuments(true);
+                using (PdfDocument oriFileDocument = new PdfDocument(new PdfReader(oriFileName)))
                 {
-                    continue;
-                }
-                string onePageFilePath = System.IO.Path.Combine(removedWarterMarkFolder, $"{pageNum}.pdf");
-                if (!File.Exists(onePageFilePath))
-                {
-                    continue;
-                }
-                PdfDocument onePageDoc = new PdfDocument(new PdfReader(onePageFilePath));
+                    for (int pageNum = 1; pageNum <= oriFileDocument.GetNumberOfPages(); pageNum++)
+                    {
+                        if (pageNum % 50 == 100)
+                        {
+                            GC.Collect();
+                        }
+                        if (!IsPageInPageRange(pageNum))
+                        {
+                            continue;
+                        }
+                        string onePageFilePath = System.IO.Path.Combine(removedWarterMarkFolder, $"{pageNum}.pdf");
+                        if (!File.Exists(onePageFilePath))
+                        {
+                            continue;
+                        }
+                        using (PdfReader pdfReader = new PdfReader(onePageFilePath))
+                        {
+                            using (PdfDocument onePageDoc = new PdfDocument(pdfReader))
+                            {
+                                try
+                                {
+                                    merger.Merge(onePageDoc, 1, 1);
+                                    appendLog("\tmerge pageNum " + pageNum);
+                                }
+                                catch (Exception ex)
+                                {
+                                    appendLog(string.Format("\tmerge pageNum {0}, error:{1}, stack:{2} ", pageNum, ex.Message, ex.StackTrace));
+                                }
+                                onePageDoc.Close();
+                                pdfReader.Close();
+                            }
+                        }
+                    }
 
-                merger.Merge(onePageDoc, 1, 1);
-                appendLog("\tmerge pageNum " + pageNum);
+                    PdfAddOutLine(oriFileDocument, pdfDocSave);
+                    merger.Close();
+                    pdfDocSave.Close();
+                    oriFileDocument.Close();
+                }
             }
-            PdfAddOutLine(oriFileDocument, pdfDocSave);
-            merger.Close();
-            pdfDocSave.Close();
-            oriFileDocument.Close();
+            pdfWriter.Close();
+
+            pdfWriter.Dispose();
             msg = outputFileName;
             return true;
         }
