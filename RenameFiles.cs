@@ -46,11 +46,12 @@ namespace pdfRemoveWaterMark
             string directoryName = Path.GetDirectoryName(imageFileName);
             Pix sourcePix = Pix.LoadFromFile(imageFileName);
 
-            Pix grayscalePix = sourcePix.ConvertRGBToGray(1, 1, 1);
+            //Pix grayscalePix = sourcePix.ConvertRGBToGray(1, 1, 1);
+            Pix grayscalePix = sourcePix.ConvertRGBToGray();
             SaveResult(grayscalePix, directoryName, "grayscalePix.png");
 
-            //Pix binarizedImage = grayscalePix.BinarizeSauvola(10, 0.15f, true);
-            Pix binarizedImage = grayscalePix.BinarizeOtsuAdaptiveThreshold(200, 200, 50, 50, 0.1F);
+            Pix binarizedImage = grayscalePix.BinarizeSauvola(10, 0.15f, true);
+            //Pix binarizedImage = grayscalePix.BinarizeOtsuAdaptiveThreshold(100, 100, 5, 5, 0.1F);
             SaveResult(binarizedImage, directoryName, "binarizedImage.png");
 
             sourcePix.Dispose();
@@ -72,15 +73,14 @@ namespace pdfRemoveWaterMark
                 //Page page = new TesseractEngine(g_traineddataPath, "chi_sim", EngineMode.Default).Process(PixConverter.ToPix(image));
                 // Page page = new TesseractEngine(g_traineddataPath, "eng", EngineMode.TesseractAndLstm).Process(PixConverter.ToPix(image));
                 //Page page = new TesseractEngine(g_traineddataPath, "eng", EngineMode.Default).Process(PixConverter.ToPix(image));
-                TesseractEngine engine = new TesseractEngine(g_traineddataPath, "eng", EngineMode.Default);
-                //TesseractEngine engine = new TesseractEngine(g_traineddataPath, "eng+chi_sim", EngineMode.Default);
-                var variableWasSet = engine.SetVariable(whitelist, whitelistValue);
+                //TesseractEngine engine = new TesseractEngine(g_traineddataPath, "eng", EngineMode.Default);
+                TesseractEngine engine = new TesseractEngine(g_traineddataPath, "eng+chi_sim", EngineMode.Default);
+                //var variableWasSet = engine.SetVariable(whitelist, whitelistValue);
 
                 g_runCount++;
                 //PageSegMode.SingleBlock
                 //PageSegMode.SingleLine
                 //PageSegMode.SingleChar
-                //PageSegMode.SingleLine
                 Page page = engine.Process(GetPix(imageFileName), (PageSegMode)g_runCount);
 
                 //打印识别率

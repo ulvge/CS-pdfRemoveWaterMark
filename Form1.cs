@@ -241,6 +241,133 @@ namespace pdfRemoveWaterMark
             string outputFileName = System.IO.Path.Combine(outputPdfFolder, $"{oriFileNameOnly}_{DateTime.Now.ToString("yyyy_MM_dd-HHmmss")}.pdf");
             return outputFileName;
         }
+        static Rectangle Convert2Rectangle(FS_RECTF rect)
+        {
+            return new Rectangle((int)Math.Round(rect.left), (int)Math.Round(rect.top), (int)Math.Round(rect.right - rect.left), (int)Math.Round(rect.bottom - rect.top));
+        }
+        private bool IsExistOverlap(FS_RECTF a, FS_RECTF b, float accuracy = 50f)
+        {
+            if (a.Equals(b))
+            {
+                return true;
+            }
+            Rectangle rectangleA = Convert2Rectangle(a);
+            Rectangle rectangleB = Convert2Rectangle(b);
+            rectangleA.Inflate((int)accuracy, (int)accuracy);
+            rectangleB.Inflate((int)accuracy, (int)accuracy);
+            Rectangle rectangleOverlap = Rectangle.Intersect(rectangleA, rectangleB);
+            if (rectangleOverlap == null || (rectangleOverlap.Width == 0) || (rectangleOverlap.Height == 0))
+            {
+                return false;
+            }
+            else {
+                // rectangleOverlap 重叠区域和rectangleA rectangleB的关系
+                if ((rectangleA.Width * rectangleA.Height - rectangleOverlap.Width * rectangleOverlap.Height < accuracy) &&
+                        (rectangleB.Width * rectangleB.Height - rectangleOverlap.Width * rectangleOverlap.Height < accuracy) &&
+                        ((rectangleA.Left - rectangleOverlap.Left < accuracy) && (rectangleB.Left - rectangleOverlap.Left < accuracy)) &&
+                        ((rectangleA.Right - rectangleOverlap.Right < accuracy) && (rectangleB.Right - rectangleOverlap.Right < accuracy)) &&
+                        ((rectangleA.Height - rectangleOverlap.Height < accuracy) && (rectangleB.Height - rectangleOverlap.Height < accuracy)) &&
+                        ((rectangleA.Width - rectangleOverlap.Width < accuracy) && (rectangleB.Width - rectangleOverlap.Width < accuracy))
+                )
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        /// <summary>
+        /// 找出所有相同的object,not delete
+        /// </summary>
+        /// <param name="itext7"></param>
+        private List<PdfPageObject> AutoFindSameObject(iText7 itext7)
+        {
+            if (g_pageNumber <= 1)
+            {
+                Console.WriteLine("It's only one page. It can't be automatically identified");
+                return null;
+            }
+            int validPageCount = 0;
+            List<PdfPageObject> foundPageObj = new List<PdfPageObject>();
+            PdfPage basePage = null;
+            for (int pageNum = 1; pageNum <= g_pageNumber; pageNum++)
+            {
+                if (!itext7.IsPageInPageRange(pageNum))
+                {
+                    continue;
+                }
+                string splitPdfFilePath = Path.Combine(TEMP_SPLIT, $"{pageNum}.pdf");
+                PdfDocument document = PdfDocument.Load(splitPdfFilePath);
+                PdfPage pageObj = document.Pages[0]; // only one
+                switch (validPageCount)
+                {
+                   case 0://找到第1页，什么都不做
+                        basePage = pageObj;
+                        break;
+                    case 1://找到第1、2页相同的元素，添加到 list
+                        for (int j = 1; j <= pageObj.PageObjects.Count - 1; j++)
+                        {
+                            foreach (var bs in basePage.PageObjects)
+                            {
+                                if (!pageObj.PageObjects[j].ObjectType.Equals(bs.ObjectType))
+                                {
+                                    continue;
+                                }
+                                if (IsExistOverlap(pageObj.PageObjects[j].BoundingBox, bs.BoundingBox))
+                                {
+                                    foundPageObj.Add(pageObj.PageObjects[j].Clone());
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    default://进一步筛选list，查看在剩下页中，某个元素x,是否存在于list中，如果存在，则保留，说明是共有的；不存在，则将list中的x删掉
+                        for (int found = foundPageObj.Count - 1; found >= 0; found--)
+                        {
+                            bool isFoundSame = false;
+                            PdfPageObject foundObj = foundPageObj[found];
+                            int j;
+                            for (j = 1; j <= pageObj.PageObjects.Count - 1; j++)
+                            {
+                                if (found == 0x3e && pageNum == 10)
+                                {
+                                    Console.WriteLine("");
+                                }
+
+                                if (!pageObj.PageObjects[j].ObjectType.Equals(foundObj.ObjectType))
+                                {
+                                    continue;
+                                }
+                                if (IsExistOverlap(pageObj.PageObjects[j].BoundingBox, foundObj.BoundingBox))
+                                {
+                                    isFoundSame = true;
+                                    break;
+                                }
+                            }
+                            if (!isFoundSame) { 
+                                // not found
+                                foundPageObj.RemoveAt(found);
+                            }
+                        }
+                        break;
+                }
+                validPageCount++;
+            }
+            return foundPageObj;
+        }
+        private bool SearchObjectFromSameFoundList(PdfPageObject pageObjects, List<PdfPageObject> foundSameObject)
+        {
+            foreach (PdfPageObject item in foundSameObject)
+            {
+                if (pageObjects.BoundingBox.Equals(item.BoundingBox) && pageObjects.ObjectType.Equals(item.ObjectType))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         /// <summary>
         /// 删除 水印
         /// </summary>
@@ -258,6 +385,7 @@ namespace pdfRemoveWaterMark
             }
             try
             {
+                List<PdfPageObject> foundSameObjectList = AutoFindSameObject(itext7);
                 for (int pageNum = 1; pageNum <= g_pageNumber; pageNum++)
                 { 
                     if (!itext7.IsPageInPageRange(pageNum))
@@ -333,7 +461,10 @@ namespace pdfRemoveWaterMark
                         }
                         else if (cb_isPath.Checked)
                         {
-
+                            if (SearchObjectFromSameFoundList(pageObj.PageObjects[j], foundSameObjectList))
+                            {
+                                pageObj.PageObjects.RemoveAt(j);
+                            }
                         }
                         else
                         {
