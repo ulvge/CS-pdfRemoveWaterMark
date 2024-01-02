@@ -310,18 +310,20 @@ _exit:
         }
         private bool SearchObjectFromSameFoundList(PdfPageObject pageObjects, List<PdfPageObject> foundSameObject)
         {
-            Color filterColor = Color.FromArgb(255, 0, 0);
-            float similarity = ColorTools.RGBSimilarity(pageObjects.FillColor, filterColor);
-            if (similarity < 0.9)
-            {
-                Console.WriteLine("not similarity");
-            }
             foreach (PdfPageObject item in foundSameObject)
             {
                 if (pageObjects.ObjectType.Equals(item.ObjectType) && pageObjects.BoundingBox.Equals(item.BoundingBox))
                 {
-                    //Convert color and check color similarity
-                    return true;
+                    Color filterColor = ColorTools.ARGB2RGB(tb_color.Text);
+                    float distance = ColorTools.RGBDistance(pageObjects.FillColor, filterColor);
+                    if (distance < 20)
+                    {
+                        Console.WriteLine("distance :" + distance);
+                        return true;
+                    }
+
+                    Console.WriteLine("distance not:" + distance);
+                    return false;
                 }
             }
             return false;

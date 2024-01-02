@@ -54,6 +54,8 @@ namespace pdfRemoveWaterMark
             this.rb_range = new System.Windows.Forms.RadioButton();
             this.rb_all = new System.Windows.Forms.RadioButton();
             this.tb_Range = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.tb_color = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -319,6 +321,25 @@ namespace pdfRemoveWaterMark
             this.tb_Range.Size = new System.Drawing.Size(199, 25);
             this.tb_Range.TabIndex = 5;
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(31, 458);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(129, 15);
+            this.label6.TabIndex = 4;
+            this.label6.Text = "指定水印颜色RGB:";
+            // 
+            // tb_color
+            // 
+            this.tb_color.Location = new System.Drawing.Point(168, 458);
+            this.tb_color.Margin = new System.Windows.Forms.Padding(4);
+            this.tb_color.Name = "tb_color";
+            this.tb_color.Size = new System.Drawing.Size(195, 25);
+            this.tb_color.TabIndex = 5;
+            this.tb_color.Text = "255,0,0";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -327,9 +348,11 @@ namespace pdfRemoveWaterMark
             this.ClientSize = new System.Drawing.Size(1205, 497);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.tb_color);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.tb_fileRoot);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -378,6 +401,8 @@ namespace pdfRemoveWaterMark
         private System.Windows.Forms.RadioButton rb_all;
         private System.Windows.Forms.TextBox tb_Range;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox tb_color;
     }
 }
 
