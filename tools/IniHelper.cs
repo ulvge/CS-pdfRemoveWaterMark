@@ -37,7 +37,7 @@ namespace Debug.tools {
         /// <param name="val">写入值</param>
         /// <param name="filepath">ini文件的完整路径</param>
         /// <returns></returns>
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32", CharSet = CharSet.Ansi)]
         private static extern int WritePrivateProfileString(
             string section,
             string key,
@@ -105,7 +105,7 @@ namespace Debug.tools {
                 foreach(var tb in textBoxList) {
                     if(tb is TextBox) {
                         TextBox t = (TextBox)tb;
-                        string readVal = getString(form.Text, t.Name, string.Empty, INI_FILE_NAME);
+                        string readVal = getString(form.Name, t.Name, string.Empty, INI_FILE_NAME);
                         if (t.Multiline == true)
                         {
                             if (readVal.Contains(magic_separator)) {
@@ -115,11 +115,11 @@ namespace Debug.tools {
                         t.Text = readVal;
                     } else if(tb is ComboBox) {
                         ComboBox c = (ComboBox)tb;
-                        string readVal = getString(form.Text, c.Name, string.Empty, INI_FILE_NAME);
+                        string readVal = getString(form.Name, c.Name, string.Empty, INI_FILE_NAME);
                         c.Text = readVal;
                     } else if(tb is CheckBox) {
                         CheckBox c = (CheckBox)tb;
-                        string readVal = getString(form.Text, c.Name, string.Empty, INI_FILE_NAME);
+                        string readVal = getString(form.Name, c.Name, string.Empty, INI_FILE_NAME);
                         c.Checked = Boolean.Parse(readVal);
                     }
                 }
@@ -184,13 +184,13 @@ namespace Debug.tools {
                     {
                         saveFiled = saveFiled.Replace(Environment.NewLine, magic_separator);
                     }
-                    writeString(form.Text, t.Name, saveFiled, iniFileName);
+                    writeString(form.Name, t.Name, saveFiled, iniFileName);
                 } else if(tb is ComboBox) {
                     ComboBox c = (ComboBox)tb;
-                    writeString(form.Text, c.Name, c.Text.ToString(), iniFileName);
+                    writeString(form.Name, c.Name, c.Text.ToString(), iniFileName);
                 } else if(tb is CheckBox) {
                     CheckBox c = (CheckBox)tb;
-                    writeString(form.Text, c.Name, c.Checked.ToString(), iniFileName);
+                    writeString(form.Name, c.Name, c.Checked.ToString(), iniFileName);
                 }
             }
         }

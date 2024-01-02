@@ -17,7 +17,7 @@ using System.Windows.Forms;
 
 namespace pdfRemoveWaterMark
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         private const string TEMP_SPLIT = "tempSplit__";
         private const string TEMP_PURE = "tempRemoved__";
@@ -28,7 +28,7 @@ namespace pdfRemoveWaterMark
         private int g_pageNumber = 0;
         string[] g_selectedFileList;
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
         }
@@ -65,7 +65,7 @@ namespace pdfRemoveWaterMark
             tb_log.Clear();
             AddUsage();
 
-            string pageModeString = iniHelper.getString(this.Text, pageModeFiled, string.Empty);
+            string pageModeString = iniHelper.getString(this.Name, pageModeFiled, string.Empty);
             try
             {
                 if (bool.Parse(pageModeString))
@@ -112,7 +112,7 @@ namespace pdfRemoveWaterMark
             string[] excludeName = { tb_log.Name };
             iniHelper.IniUpdate2File(this, excludeName);
 
-            iniHelper.writeString(this.Text, pageModeFiled, rb_all.Checked.ToString());
+            iniHelper.writeString(this.Name, pageModeFiled, rb_all.Checked.ToString());
         }
 
         private class ImageRectArea
@@ -312,12 +312,28 @@ namespace pdfRemoveWaterMark
                         }
                         else if (cb_isImage.Checked)
                         {
-                            if (IsMatchImageRect(rect, imageRectAreaWarterMark)) { 
-                                removeCount++;
-                                AppendLog($"\tpages: {pageNum} image , Remove At Ojbect: {j} , search rect.w h : {(int)rect.Width}, {(int)rect.Height}");
-                                SaveTheRemovedImage(pageObj.PageObjects, pageNum, j, g_outputImagePath);
-                                pageObj.PageObjects.RemoveAt(j);
+                            if (!IsMatchImageRect(rect, imageRectAreaWarterMark))
+                            {
+                                continue;
                             }
+                            switch (pageObj.PageObjects[j].ObjectType)
+                            {
+                                case Patagames.Pdf.Enums.PageObjectTypes.PDFPAGE_IMAGE:
+                                    removeCount++;
+                                    AppendLog($"\tpages: {pageNum} image , Remove At Ojbect: {j} , search rect.w h : {(int)rect.Width}, {(int)rect.Height}");
+                                    SaveTheRemovedImage(pageObj.PageObjects, pageNum, j, g_outputImagePath);
+                                    pageObj.PageObjects.RemoveAt(j);
+                                    break;
+                                case Patagames.Pdf.Enums.PageObjectTypes.PDFPAGE_PATH:
+                                    break;
+                                case Patagames.Pdf.Enums.PageObjectTypes.PDFPAGE_TEXT:
+                                default:
+                                    break;
+                            }
+                        }
+                        else if (cb_isPath.Checked)
+                        {
+
                         }
                         else
                         {
@@ -353,7 +369,7 @@ namespace pdfRemoveWaterMark
             return true;
         }
 
-        private void SaveTheRemovedImage(PdfPageObjectsCollection pageObjects, int page, int idx, string savePath)
+        private bool SaveTheRemovedImage(PdfPageObjectsCollection pageObjects, int page, int idx, string savePath)
         {
             if (!Directory.Exists(savePath))
             {
@@ -362,13 +378,15 @@ namespace pdfRemoveWaterMark
 
             PdfPageObject objectToSave = pageObjects[idx];
             PdfImageObject imageObject = objectToSave as PdfImageObject;
-            if (imageObject == null)
-                return; //if not an image object then nothing do
+            if (imageObject == null) {
+                return false; //if not an image object then nothing do
+            }
 
             //Save image to disk
             string fileName = page + "_" + idx + "--wh_" + (int)imageObject.BoundingBox.Width + "x" + (int)imageObject.BoundingBox.Height;
             var path = string.Format(savePath + "\\"+ fileName + ".png");
             imageObject.Bitmap.Image.Save(path, ImageFormat.Png);
+            return true;
         }
 
         /// <summary>
@@ -428,7 +446,7 @@ namespace pdfRemoveWaterMark
                     g_threadMainWork.Abort();
                 }
                 tb_fileRoot.Text = fileNames[0];
-                if (fileNames[0].EndsWith("*.pdf"))
+                if (fileNames[0].EndsWith(".pdf"))
                 {
                     g_threadMainWork = new Thread(new ParameterizedThreadStart(RemoveWaterMarkThreadWork));
                     g_threadMainWork.Start(fileNames[0]);

@@ -1,7 +1,7 @@
 ﻿
 namespace pdfRemoveWaterMark
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// 必需的设计器变量。
@@ -29,7 +29,7 @@ namespace pdfRemoveWaterMark
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.tb_fileRoot = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
@@ -54,11 +54,14 @@ namespace pdfRemoveWaterMark
             this.rb_range = new System.Windows.Forms.RadioButton();
             this.rb_all = new System.Windows.Forms.RadioButton();
             this.tb_Range = new System.Windows.Forms.TextBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.cb_isPath = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // tb_fileRoot
@@ -137,7 +140,7 @@ namespace pdfRemoveWaterMark
             this.groupBox2.Controls.Add(this.h_max);
             this.groupBox2.Location = new System.Drawing.Point(34, 249);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(456, 166);
+            this.groupBox2.Size = new System.Drawing.Size(456, 159);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             // 
@@ -150,7 +153,7 @@ namespace pdfRemoveWaterMark
             this.pictureBox1.InitialImage = null;
             this.pictureBox1.Location = new System.Drawing.Point(17, 28);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(301, 90);
+            this.pictureBox1.Size = new System.Drawing.Size(301, 83);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 7;
             this.pictureBox1.TabStop = false;
@@ -248,7 +251,7 @@ namespace pdfRemoveWaterMark
             this.tb_log.Multiline = true;
             this.tb_log.Name = "tb_log";
             this.tb_log.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tb_log.Size = new System.Drawing.Size(680, 371);
+            this.tb_log.Size = new System.Drawing.Size(680, 418);
             this.tb_log.TabIndex = 30;
             // 
             // groupBox3
@@ -259,7 +262,7 @@ namespace pdfRemoveWaterMark
             this.groupBox3.Controls.Add(this.tb_log);
             this.groupBox3.Location = new System.Drawing.Point(496, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(694, 403);
+            this.groupBox3.Size = new System.Drawing.Size(694, 450);
             this.groupBox3.TabIndex = 31;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "日志";
@@ -319,12 +322,32 @@ namespace pdfRemoveWaterMark
             this.tb_Range.Size = new System.Drawing.Size(199, 25);
             this.tb_Range.TabIndex = 5;
             // 
-            // Form1
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.cb_isPath);
+            this.groupBox5.Location = new System.Drawing.Point(34, 414);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(455, 58);
+            this.groupBox5.TabIndex = 33;
+            this.groupBox5.TabStop = false;
+            // 
+            // cb_isPath
+            // 
+            this.cb_isPath.AutoSize = true;
+            this.cb_isPath.Location = new System.Drawing.Point(6, 0);
+            this.cb_isPath.Name = "cb_isPath";
+            this.cb_isPath.Size = new System.Drawing.Size(180, 19);
+            this.cb_isPath.TabIndex = 6;
+            this.cb_isPath.Text = "水印是路径(矢量文字)";
+            this.cb_isPath.UseVisualStyleBackColor = true;
+            // 
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.ClientSize = new System.Drawing.Size(1205, 450);
+            this.ClientSize = new System.Drawing.Size(1205, 497);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -334,7 +357,7 @@ namespace pdfRemoveWaterMark
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "pdf去水印";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -347,6 +370,8 @@ namespace pdfRemoveWaterMark
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -378,6 +403,8 @@ namespace pdfRemoveWaterMark
         private System.Windows.Forms.RadioButton rb_all;
         private System.Windows.Forms.TextBox tb_Range;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.CheckBox cb_isPath;
     }
 }
 
