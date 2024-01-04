@@ -338,7 +338,8 @@ namespace pdfRemoveWaterMark
                         else
                         {
                             msg = "请选择水印的类型，文本或图片，至少选择一种";
-                            return false;
+                            continue;
+                            //return false;
                         }
                     }
                     if (removeCount == 0)
@@ -446,7 +447,7 @@ namespace pdfRemoveWaterMark
                     g_threadMainWork.Abort();
                 }
                 tb_fileRoot.Text = fileNames[0];
-                if (fileNames[0].EndsWith(".pdf"))
+                if (fileNames[0].ToLower().EndsWith(".pdf"))
                 {
                     g_threadMainWork = new Thread(new ParameterizedThreadStart(RemoveWaterMarkThreadWork));
                     g_threadMainWork.Start(fileNames[0]);

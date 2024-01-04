@@ -42,6 +42,7 @@ namespace pdfRemoveWaterMark
             {
                 msg = string.Empty;
                 PdfReader oriFilePdfReader = new PdfReader(oriFileName);
+                oriFilePdfReader.SetUnethicalReading(true);
                 PdfDocument oriFileDoc = new PdfDocument(oriFilePdfReader);
                 if (!Directory.Exists(splitTempFolder))
                 {
@@ -73,7 +74,7 @@ namespace pdfRemoveWaterMark
             }
             catch (Exception ex)
             {
-                msg = ex.Message;
+                msg = "PdfSplit exception: " + ex.Message;
                 return false;
             }
             finally
