@@ -54,14 +54,11 @@ namespace pdfRemoveWaterMark
             this.rb_range = new System.Windows.Forms.RadioButton();
             this.rb_all = new System.Windows.Forms.RadioButton();
             this.tb_Range = new System.Windows.Forms.TextBox();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.cb_isPath = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
-            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // tb_fileRoot
@@ -102,7 +99,7 @@ namespace pdfRemoveWaterMark
             this.tb_warterMark.Margin = new System.Windows.Forms.Padding(4);
             this.tb_warterMark.Multiline = true;
             this.tb_warterMark.Name = "tb_warterMark";
-            this.tb_warterMark.Size = new System.Drawing.Size(343, 82);
+            this.tb_warterMark.Size = new System.Drawing.Size(343, 118);
             this.tb_warterMark.TabIndex = 5;
             // 
             // groupBox1
@@ -111,7 +108,7 @@ namespace pdfRemoveWaterMark
             this.groupBox1.Controls.Add(this.tb_warterMark);
             this.groupBox1.Location = new System.Drawing.Point(34, 142);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(375, 100);
+            this.groupBox1.Size = new System.Drawing.Size(375, 143);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             // 
@@ -138,9 +135,9 @@ namespace pdfRemoveWaterMark
             this.groupBox2.Controls.Add(this.w_min);
             this.groupBox2.Controls.Add(this.h_min);
             this.groupBox2.Controls.Add(this.h_max);
-            this.groupBox2.Location = new System.Drawing.Point(34, 249);
+            this.groupBox2.Location = new System.Drawing.Point(34, 292);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(456, 159);
+            this.groupBox2.Size = new System.Drawing.Size(456, 163);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             // 
@@ -153,7 +150,7 @@ namespace pdfRemoveWaterMark
             this.pictureBox1.InitialImage = null;
             this.pictureBox1.Location = new System.Drawing.Point(17, 28);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(301, 83);
+            this.pictureBox1.Size = new System.Drawing.Size(301, 87);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 7;
             this.pictureBox1.TabStop = false;
@@ -283,7 +280,7 @@ namespace pdfRemoveWaterMark
             this.groupBox4.Controls.Add(this.rb_range);
             this.groupBox4.Controls.Add(this.rb_all);
             this.groupBox4.Controls.Add(this.tb_Range);
-            this.groupBox4.Location = new System.Drawing.Point(40, 71);
+            this.groupBox4.Location = new System.Drawing.Point(34, 71);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(355, 56);
             this.groupBox4.TabIndex = 32;
@@ -322,32 +319,12 @@ namespace pdfRemoveWaterMark
             this.tb_Range.Size = new System.Drawing.Size(199, 25);
             this.tb_Range.TabIndex = 5;
             // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.cb_isPath);
-            this.groupBox5.Location = new System.Drawing.Point(34, 414);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(455, 58);
-            this.groupBox5.TabIndex = 33;
-            this.groupBox5.TabStop = false;
-            // 
-            // cb_isPath
-            // 
-            this.cb_isPath.AutoSize = true;
-            this.cb_isPath.Location = new System.Drawing.Point(6, 0);
-            this.cb_isPath.Name = "cb_isPath";
-            this.cb_isPath.Size = new System.Drawing.Size(180, 19);
-            this.cb_isPath.TabIndex = 6;
-            this.cb_isPath.Text = "水印是路径(矢量文字)";
-            this.cb_isPath.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1205, 497);
-            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -370,8 +347,6 @@ namespace pdfRemoveWaterMark
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -403,8 +378,6 @@ namespace pdfRemoveWaterMark
         private System.Windows.Forms.RadioButton rb_all;
         private System.Windows.Forms.TextBox tb_Range;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.CheckBox cb_isPath;
     }
 }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using pdfRemoveWaterMark.tools;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,10 @@ namespace pdfRemoveWaterMark
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            ModifyLocalDateTime.SetLocalTime();
             Application.Run(new MainForm());
+            ModifyLocalDateTime.RestoreLocalTime();
         }
     }
 }

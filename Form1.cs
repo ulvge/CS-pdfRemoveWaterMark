@@ -1,6 +1,7 @@
 ﻿using Debug.tools;
 using Patagames.Pdf;
 using Patagames.Pdf.Net;
+using pdfRemoveWaterMark.tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -36,7 +37,7 @@ namespace pdfRemoveWaterMark
         private void AddUsage()
         {
             AppendLog("帮助：");
-            AppendLog("\t本软件可去除pdf水印，支持水印类型，文本和图片");
+            AppendLog("\t本软件可去除pdf水印，支持水印类型，文本和图片，也可自动识别去除相同内容");
             AppendLog("\t本软件识别图片中的文本，开发阶段...");
             //AppendLog(Environment.NewLine);
             AppendLog("关于指定页面：");
@@ -54,7 +55,7 @@ namespace pdfRemoveWaterMark
             AppendLog("\t会将pdf文档中，已经去掉的图片保存下来");
             AppendLog("\t图片文件夹名中的宽高参数，可依需要进行调整，确保是想去除的内容");
             AppendLog("\t1_0--wh_401x260.png,表示第1页的第0个水印，宽是401,高是260");
-
+            AppendLog("即不选择文本，也不选择图片，则会自动识别");
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -309,10 +310,17 @@ _exit:
         }
         private bool SearchObjectFromSameFoundList(PdfPageObject pageObjects, List<PdfPageObject> foundSameObject)
         {
+            Color filterColor = Color.FromArgb(255, 0, 0);
+            float similarity = ColorTools.RGBSimilarity(pageObjects.FillColor, filterColor);
+            if (similarity < 0.9)
+            {
+                Console.WriteLine("not similarity");
+            }
             foreach (PdfPageObject item in foundSameObject)
             {
-                if (pageObjects.BoundingBox.Equals(item.BoundingBox) && pageObjects.ObjectType.Equals(item.ObjectType))
+                if (pageObjects.ObjectType.Equals(item.ObjectType) && pageObjects.BoundingBox.Equals(item.BoundingBox))
                 {
+                    //Convert color and check color similarity
                     return true;
                 }
             }
@@ -335,7 +343,10 @@ _exit:
             }
             try
             {
-                List<PdfPageObject> foundSameObjectList = AutoFindSameObject(itext7);
+                List<PdfPageObject> foundSameObjectList = new List<PdfPageObject>();
+                if (!cb_isText.Checked && !cb_isImage.Checked) {
+                    foundSameObjectList = AutoFindSameObject(itext7);
+                }
                 for (int pageNum = 1; pageNum <= g_pageNumber; pageNum++)
                 { 
                     if (!itext7.IsPageInPageRange(pageNum))
@@ -346,6 +357,7 @@ _exit:
                     bool isTextMatchSuccess = false;
                     string splitPdfFilePath = Path.Combine(TEMP_SPLIT, $"{pageNum}.pdf");
                     string outputPdfFilePath = Path.Combine(TEMP_PURE, $"{pageNum}.pdf");
+                    Console.WriteLine("start processing file: " + outputPdfFilePath);
                     PdfDocument document = PdfDocument.Load(splitPdfFilePath);
                     PdfPage pageObj = document.Pages[0]; // only one
                     WatermarkFound targetWatermarkFound = watermarkFounds.FirstOrDefault(w => w.page == pageNum);
@@ -409,23 +421,12 @@ _exit:
                                     break;
                             }
                         }
-                        else if (cb_isPath.Checked)
+                        else // Automatic identification watermark
                         {
-                            if (pageObj.PageObjects[j].ObjectType != Patagames.Pdf.Enums.PageObjectTypes.PDFPAGE_PATH)
-                            {
-                                Console.WriteLine("ObjectType:" + pageObj.PageObjects[j].ObjectType);
-                                continue;
-                            }
                             if (SearchObjectFromSameFoundList(pageObj.PageObjects[j], foundSameObjectList))
                             {
                                 pageObj.PageObjects.RemoveAt(j);
                             }
-                        }
-                        else
-                        {
-                            msg = "请选择水印的类型，文本或图片，至少选择一种";
-                            continue;
-                            //return false;
                         }
                     }
                     if (removeCount == 0)
