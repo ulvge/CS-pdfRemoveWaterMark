@@ -26,6 +26,7 @@ namespace pdfRemoveWaterMark.tools
         private static extern bool SetSystemTime(ref Systemtime st);
 
         private static int g_addDays = 0;
+        private static DateTime g_localRealTime = DateTime.Now;
         private static bool SetLocalDateTime(DateTime newTime)
         {
             Systemtime st;
@@ -86,6 +87,10 @@ namespace pdfRemoveWaterMark.tools
                 Console.WriteLine("还原时间: 失败");
             }
             return isSuccess;
+        }
+        public static DateTime GetLocalRealTime()
+        {
+            return g_localRealTime;
         }
     }
 }

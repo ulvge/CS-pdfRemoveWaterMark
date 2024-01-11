@@ -239,7 +239,9 @@ namespace pdfRemoveWaterMark
                 Directory.CreateDirectory(outputPdfFolder);
             }
             string oriFileNameOnly = System.IO.Path.GetFileNameWithoutExtension(oriFileName);
-            string outputFileName = System.IO.Path.Combine(outputPdfFolder, $"{oriFileNameOnly}_{DateTime.Now.ToString("yyyy_MM_dd-HHmmss")}.pdf");
+            string date = ModifyLocalDateTime.GetLocalRealTime().ToString("yyyy_MM_dd");
+            string time = DateTime.Now.ToString("HHmmss");
+            string outputFileName = System.IO.Path.Combine(outputPdfFolder, $"{oriFileNameOnly}_{date +"-" + time}.pdf");
             return outputFileName;
         }
         private bool IsExistOverlap(FS_RECTF a, FS_RECTF b)
@@ -488,9 +490,8 @@ _exit:
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Multiselect = false;
-            fileDialog.Filter = "PDF files (*.pdf)|*.pdf|Image files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp";
+            fileDialog.Filter = "PDF files (*.pdf)|*.pdf";
             fileDialog.FilterIndex = 1;
-            fileDialog.Multiselect = true;
 
             if (fileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -540,12 +541,6 @@ _exit:
                 {
                     g_threadMainWork = new Thread(new ParameterizedThreadStart(RemoveWaterMarkThreadWork));
                     g_threadMainWork.Start(fileNames[0]);
-                }
-                else
-                {
-                    RenameFiles renameFiles = new RenameFiles(AppendLog);
-                    g_threadMainWork = new Thread(new ParameterizedThreadStart(renameFiles.RenameFilesThread));
-                    g_threadMainWork.Start(fileNames);
                 }
             }
             catch (Exception ex)

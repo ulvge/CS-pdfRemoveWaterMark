@@ -60,27 +60,6 @@ namespace pdfRemoveWaterMark.tools
             }
             return defaultColor;
         }
-        public static float RGBSimilarity1(FS_COLOR col1, Color col2)
-        {
-            HSV hsv1 = new HSV();
-            HSV hsv2 = new HSV();
-
-            SkiaSharp.SKColor sKColor1 = new SkiaSharp.SKColor((byte)col1.R, (byte)col1.G, (byte)col1.B, (byte)col1.A);
-            sKColor1.ToHsv(out hsv1.h, out hsv1.s, out hsv1.v);
-
-            SkiaSharp.SKColor sKColor2 = new SkiaSharp.SKColor((byte)col2.R, (byte)col2.G, (byte)col2.B, (byte)col2.A);
-            sKColor2.ToHsv(out hsv2.h, out hsv2.s, out hsv2.v);
-
-            float detah = hsv1.h - hsv2.h;
-            float detas = hsv1.s - hsv2.s;
-            float detav = hsv1.v - hsv2.v;
-            double len = Math.Pow(detah * detah + detas * detas + detav * detav, 0.5);
-            if (len > 1) len = 1.0;
-            float similarity = (float)((1.0 - len) / 1.0);
-
-            return similarity;
-        }
-
 
         public static float RGBDistance(FS_COLOR col1, Color col2)
         {
