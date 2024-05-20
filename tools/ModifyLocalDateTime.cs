@@ -24,6 +24,8 @@ namespace pdfRemoveWaterMark.tools
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetSystemTime(ref Systemtime st);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetLocalTime(ref Systemtime time);
 
         private static int g_addDays = 0;
         private static DateTime g_localRealTime = DateTime.Now;
@@ -39,14 +41,14 @@ namespace pdfRemoveWaterMark.tools
             st.second = (short)newTime.Second;
             st.milliseconds = (short)newTime.Millisecond;
 
-            //转化后的时间进行本地设置，并返回成功与否
-            return SetSystemTime(ref st);
+            bool isOk = SetLocalTime(ref st);
+            return isOk;
         }
-        public static bool SetLocalTime()
+        public static bool SetLocalTimeMe()
         {
             // 获取当前时间
             DateTime currentTime = DateTime.UtcNow;
-            DateTime licenseValidTime = new DateTime(2024, 1, 2, currentTime.Hour, currentTime.Minute, currentTime.Second, currentTime.Millisecond, DateTimeKind.Local);
+            DateTime licenseValidTime = new DateTime(2023, 12, 2, currentTime.Hour, currentTime.Minute, currentTime.Second, currentTime.Millisecond, DateTimeKind.Local);
             TimeSpan timeSpan = currentTime - licenseValidTime;
 
             // 计算修改后的时间

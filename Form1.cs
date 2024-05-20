@@ -28,16 +28,18 @@ namespace pdfRemoveWaterMark
         string g_outputImagePath = string.Empty;
         private int g_pageNumber = 0;
         string[] g_selectedFileList;
+        bool isSetSuccess;
 
-        public MainForm()
+        public MainForm(bool isSetSuccess)
         {
             InitializeComponent();
+            this.isSetSuccess = isSetSuccess;
         }
 
         private void AddUsage()
         {
             AppendLog("帮助：");
-            AppendLog("\t本软件可去除pdf水印，支持水印类型，文本和图片，也可自动识别去除相同内容");
+            AppendLog("\t本软件可去除pdf水印，支持水印类型，文本和图片，也可自动按颜色识别去除相同内容");
             AppendLog("\t本软件识别图片中的文本，开发阶段...");
             //AppendLog(Environment.NewLine);
             AppendLog("关于指定页面：");
@@ -55,7 +57,8 @@ namespace pdfRemoveWaterMark
             AppendLog("\t会将pdf文档中，已经去掉的图片保存下来");
             AppendLog("\t图片文件夹名中的宽高参数，可依需要进行调整，确保是想去除的内容");
             AppendLog("\t1_0--wh_401x260.png,表示第1页的第0个水印，宽是401,高是260");
-            AppendLog("即不选择文本，也不选择图片，则会自动识别");
+            AppendLog("即不选择文本，也不选择图片，则会自动按颜色识别");
+            AppendLog("\t颜色格式，如果16进制，加上0x。");
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -87,6 +90,10 @@ namespace pdfRemoveWaterMark
             }
             cb_isText_CheckedChanged(cb_isText, null);
             cb_isImage_CheckedChanged(cb_isImage, null);
+            if (!isSetSuccess)
+            {
+                MessageBox.Show("not run in administrator!!!", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void AbordWorkThread()
@@ -316,8 +323,8 @@ _exit:
             {
                 if (pageObjects.ObjectType.Equals(item.ObjectType) && pageObjects.BoundingBox.Equals(item.BoundingBox))
                 {
-                    Color filterColor = ColorTools.ARGB2RGB(tb_color.Text);
-                    float distance = ColorTools.RGBDistance(pageObjects.FillColor, filterColor);
+                    Color SetColor = ColorTools.ARGB2RGB(tb_color.Text);
+                    float distance = ColorTools.RGBDistance(pageObjects.FillColor, SetColor);
                     if (distance < 20)
                     {
                         Console.WriteLine("distance :" + distance);

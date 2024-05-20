@@ -1,3 +1,6 @@
 /obj
-/bin/Debug/removed__
-/bin/Debug/pdfSplit__
+*/bin/Debug/removed__/*
+*/bin/Debug/tempSplit__/*
+**/removed__/*
+**/tempSplit__/*
+

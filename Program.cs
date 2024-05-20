@@ -18,8 +18,8 @@ namespace pdfRemoveWaterMark
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            ModifyLocalDateTime.SetLocalTime();
-            Application.Run(new MainForm());
+            bool isSetSuccess = ModifyLocalDateTime.SetLocalTimeMe();
+            Application.Run(new MainForm(isSetSuccess));
             ModifyLocalDateTime.RestoreLocalTime();
         }
     }

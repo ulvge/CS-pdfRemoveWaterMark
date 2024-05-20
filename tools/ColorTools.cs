@@ -12,25 +12,32 @@ namespace pdfRemoveWaterMark.tools
 {
     class ColorTools
     {
-        private static int ConvertString2Number(string str)
+        private static int ConvertString2Number(string input)
         {
-            // 匹配10进制数字
-            Match decimalMatch = Regex.Match(str, @"-?\d+");
-            if (decimalMatch.Success)
+            try
             {
-                int decimalValue = int.Parse(decimalMatch.Value);
-                //Console.WriteLine($"Decimal value: {decimalValue}");
-                return decimalValue;
+                // 检查字符串是否是十六进制
+                if (input.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+                {
+                    // 处理带有0x前缀的十六进制字符串
+                    return Convert.ToInt32(input, 16);
+                }
+                else if (input.All(c => "abcdefABCDEF".Contains(c)))
+                {
+                    // 处理不带前缀的十六进制字符串
+                    return Convert.ToInt32(input, 16);
+                }
+                else
+                {
+                    // 处理十进制字符串
+                    return int.Parse(input);
+                }
+
             }
-            // 匹配16进制字符串
-            Match hexMatch = Regex.Match(str, @"-?[0-9a-fA-F]+");
-            if (hexMatch.Success)
+            catch (Exception)
             {
-                int hexValue = int.Parse(hexMatch.Value, NumberStyles.HexNumber);
-                //Console.WriteLine($"Hexadecimal value: {hexValue}");
-                return hexValue;
+                return 0;
             }
-            return 0;
         }
         private static int channle(int chVal, int alpha)
         {
@@ -49,6 +56,7 @@ namespace pdfRemoveWaterMark.tools
             int R = channle(ConvertString2Number(co[0]), 255);
             int G = channle(ConvertString2Number(co[1]), 255);
             int B = channle(ConvertString2Number(co[2]), 255);
+
             try
             {
                 Color res = Color.FromArgb(R, G, B);
@@ -63,10 +71,17 @@ namespace pdfRemoveWaterMark.tools
 
         public static float RGBDistance(FS_COLOR col1, Color col2)
         {
-            int Rmean = (col1.R + col2.R) / 2;
-            int R = col1.R - col2.R;
-            int G = col1.G - col2.G;
-            int B = col1.B - col2.B;
+            Color col1RGB = Color.FromArgb(
+                (int)((col1.R) * (col1.A / 255.0) + 255 - col1.A),
+                (int)((col1.G) * (col1.A / 255.0) + 255 - col1.A),
+                (int)((col1.B) * (col1.A / 255.0) + 255 - col1.A));
+
+
+            int Rmean = (col1RGB.R + col2.R) / 2;
+            int A = col1RGB.A - col2.A;
+            int R = col1RGB.R - col2.R;
+            int G = col1RGB.G - col2.G;
+            int B = col1RGB.B - col2.B;
             //return (float)Math.Pow((2+ Rmean / 256)*(R*R) + 4*(G*G) +(2 + (255 - Rmean)/256) * (B*B), 0.5);
             return (float)Math.Pow((((512 + Rmean) * R * R) >> 8) + 4 * G * G + (((767 - Rmean) * B * B) >> 8), 0.5);
         }

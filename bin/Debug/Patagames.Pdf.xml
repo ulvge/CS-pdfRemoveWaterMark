@@ -3433,6 +3433,31 @@
             (PDF 1.6) A short line at the endpoint approximately 30 degrees clockwise from perpendicular to the line itself
             </summary>
         </member>
+        <member name="T:Patagames.Pdf.Enums.PdfStandard">
+            <summary>
+            A version of the PDF standard.
+            </summary>
+        </member>
+        <member name="F:Patagames.Pdf.Enums.PdfStandard.PdfX">
+            <summary>
+            The PDF/X format standard specified in ISO 15930.
+            </summary>
+        </member>
+        <member name="F:Patagames.Pdf.Enums.PdfStandard.PdfA">
+            <summary>
+            The PDF/A standard as defined by ISO 19005.
+            </summary>
+        </member>
+        <member name="F:Patagames.Pdf.Enums.PdfStandard.PdfE">
+            <summary>
+            The PDF/E standard as defined by ISO 24517.
+            </summary>
+        </member>
+        <member name="F:Patagames.Pdf.Enums.PdfStandard.Other">
+            <summary>
+            Other key defined by an ISO 32000 extension.
+            </summary>
+        </member>
         <member name="T:Patagames.Pdf.Enums.PdfContentAlignment">
             <summary>
             Specifies alignment of content.
@@ -12429,6 +12454,346 @@
             </summary>
             <param name="index">The zero-based index of the <see cref="T:Patagames.Pdf.REFOBJ"/>  to remove.</param>
         </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.ArchitectureMismatchException">
+            <summary>
+            There was a mismatch between the processor architecture of the project being built and the processor architecture of the 'pdfium.dll'
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.ArchitectureMismatchException.#ctor">
+            <summary>
+            There was a mismatch between the processor architecture of the project being built and the processor architecture of the 'pdfium.dll'.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.SpecificFileNameException">
+            <summary>
+            There was a mismatch between the processor architecture of the project being built and the processor architecture of the 'pdfium.dll'
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.SpecificFileNameException.#ctor">
+            <summary>
+            There was a mismatch between the processor architecture of the project being built and the processor architecture of the 'pdfium.dll'.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.DomException">
+            <summary>
+            The exception that is thrown when an element is not present in the DOM.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.DomException.#ctor(Patagames.Pdf.Net.PdfField)">
+            <summary>
+            Initializes a new instance of the DomException class.
+            </summary>
+            <param name="field">The <see cref="T:Patagames.Pdf.Net.PdfField"/> on which the exception was thrown.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.DomException.#ctor(Patagames.Pdf.Net.PdfControl)">
+            <summary>
+            Initializes a new instance of the DomException class.
+            </summary>
+            <param name="control">The <see cref="T:Patagames.Pdf.Net.PdfControl"/> on which the exception was thrown.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.DomException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the DomException class.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.InvalidFunctionException">
+            <summary>
+             The exception that is thrown when the underlying Dictionary / Stream is not in the correct format.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.InvalidFunctionException.#ctor">
+            <summary>
+            Initializes a new instance of the InvalidFunctionException class.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.TrialExpiredException">
+            <summary>
+            You are currently evaluating the library and the trial period is expired.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.TrialExpiredException.#ctor">
+            <summary>
+            Initializes a new instance of the TrialExpiredException class.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.UnknownFunctionTypeException">
+            <summary>
+             The exception that is thrown when the type of a function cannot be recognized.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.UnknownFunctionTypeException.#ctor">
+            <summary>
+            Initializes a new instance of the UnknownFunctionTypeException class.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.BadFormatException">
+            <summary>
+            The exception that is thrown when the PDF file is invalid.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.BadFormatException.#ctor">
+            <summary>
+            Initializes a new instance of the BadFormatException class.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.FatalErrorException">
+            <summary>
+            Represents a fatal runtime error that occurs inside pdfium engine.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.FatalErrorException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the UnknownErrorException class.
+            </summary>
+            <param name="innerException">The exception that is the cause of the current exception.</param>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.PdfFileNotFoundException">
+            <summary>
+            The exception that is thrown when an attempt to access a file that does not exist on disk fails.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.PdfFileNotFoundException.#ctor">
+            <summary>
+            Initializes a new instance of the PdfFileNotFoundException class.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.FontNotFoundException">
+            <summary>
+             The exception that is thrown when the requested font was not found
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.FontNotFoundException.#ctor">
+            <summary>
+            Initializes a new instance of the FontNotFoundException class.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.ImageObjectIsEmptyException">
+            <summary>
+            The exception that is thrown when the PdfImageObject don't contain PdfBitmap
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.ImageObjectIsEmptyException.#ctor">
+            <summary>
+            Initializes a new instance of the ImageObjectIsEmptyException class.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.InvalidLicenseKeyException">
+            <summary>
+            The exception that is thrown when the key provided to a initialization method is not valid.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.InvalidLicenseKeyException.#ctor">
+            <summary>
+            Initializes a new instance of the InvalidLicenseKeyException class.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.EntryNotFoundException">
+            <summary>
+             The exception that is thrown when the dictionary's entry was not found
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.EntryNotFoundException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the FontNotFoundException class.
+            </summary>
+            <param name="entryName">Entry name.</param>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.PdfParserException">
+            <summary>
+            This exception is commonly raised when a PDF object cannot be parsed.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.PdfParserException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the PdfParserException class.
+            </summary>
+            <param name="message">Exception message.</param>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.InvalidPasswordException">
+            <summary>
+            This exception is commonly raised when the password for a PDF file does not match.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.InvalidPasswordException.#ctor">
+            <summary>
+            Initializes a new instance of the InvalidPasswordException class.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.LicenseKeyIsExpiredException">
+            <summary>
+            The exception that is thrown when the key provided to a initialization method is expired.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.LicenseKeyIsExpiredException.#ctor">
+            <summary>
+            Initializes a new instance of the LicenseKeyIsExpiredException class.
+            </summary>
+            <remarks>
+            <para>This usually indicates that the trial key has expired. The regular license key never expires.</para>
+            </remarks>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.LicenseKeyIsOutOfDateException">
+            <summary>
+            The exception that is thrown when the key provided to a initialization method is out of date.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.LicenseKeyIsOutOfDateException.#ctor">
+            <summary>
+            Initializes a new instance of the LicenseKeyIsOutOfDateException class.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.MemoryLeakException">
+            <summary>
+            The exception that is thrown when the undisposed instance of class was found.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.MemoryLeakException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the MemoryLeakException class.
+            </summary>
+            <param name="className">A class name there memory leak was detected.</param>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.NoLicenseException">
+            <summary>
+             The exception that is thrown only in trial mode
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.NoLicenseException.#ctor(System.UInt32)">
+            <summary>
+            Initializes a new instance of the NoLicenseException class.
+            </summary>
+            <param name="errorCode">Error code.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.NoLicenseException.#ctor(System.UInt32,System.String)">
+            <summary>
+            Initializes a new instance of the NoLicenseException class.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="errorCode">Error code.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.NoLicenseException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the NoLicenseException class.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.NotAvailableException">
+            <summary>
+            The exception that is thrown when the element (document, page, forms and etc) is not yet available.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.NotAvailableException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Patagames.Pdf.Net.Exceptions.NotAvailableException"/> class with a specified error message.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.PageNotFoundException">
+            <summary>
+             The exception that is thrown when the requested page was not found in PDF document
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.PageNotFoundException.#ctor">
+            <summary>
+            Initializes a new instance of the PageNotFoundException class.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.PdfiumException">
+            <summary>
+            Represents errors that occur inside Pdfium SDK.
+            </summary>
+        </member>
+        <member name="P:Patagames.Pdf.Net.Exceptions.PdfiumException.ErrorCode">
+            <summary>
+            Gets a code that provide additional information about the exception.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.PdfiumException.#ctor(System.UInt32,System.String)">
+            <summary>
+            Initializes a new instance of the PdfiumException class.
+            </summary>
+            <param name="errorCode">Error code.</param>
+            <param name="message">The error message that explains the reason for the exception.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.PdfiumException.#ctor(System.UInt32,System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the PdfiumException class.
+            </summary>
+            <param name="errorCode">Error code</param>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.PdfiumException.#ctor(System.UInt32)">
+            <summary>
+            Initializes a new instance of the PdfiumException class.
+            </summary>
+            <param name="errorCode">Error code.</param>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.RequiredDataIsAbsentException">
+            <summary>
+            The exception that is thrown when the required data is absent.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.RequiredDataIsAbsentException.#ctor">
+            <summary>
+            Initializes a new instance of the RequiredDataIsAbsentException class.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.RequiredDataIsAbsentException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the RequiredDataIsAbsentException class.
+            </summary>
+            <param name="message">Exception message.</param>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.UnexpectedTypeException">
+            <summary>
+            This exception is commonly raised when the annotation cannot be parsed.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.UnexpectedTypeException.#ctor(System.Type,System.Type)">
+            <summary>
+            Initializes a new instance of the InvalidAnnotationException class.
+            </summary>
+            <param name="expected">Expected type.</param>
+            <param name="actual">Actual type.</param>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.UnknownErrorException">
+            <summary>
+            Represents a fatal runtime error that occurs inside Pdfium SDK.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.UnknownErrorException.#ctor">
+            <summary>
+            Initializes a new instance of the UnknownErrorException class.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.UnknownErrorException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the UnknownErrorException class.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.UnsupportedImageFormatException">
+            <summary>
+            The exception that is thrown when the PDFBitmap  can't be converted into .Net GDI+ Image
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.UnsupportedImageFormatException.#ctor">
+            <summary>
+            Initializes a new instance of the UnsupportedImageFormatException class.
+            </summary>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Exceptions.UnsupportedSecuritySchemeException">
+            <summary>
+            Unsupported security scheme exception.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Exceptions.UnsupportedSecuritySchemeException.#ctor">
+            <summary>
+            Initializes a new instance of the UnknownErrorException class.
+            </summary>
+        </member>
         <member name="T:Patagames.Pdf.Net.OptionalContent.PdfOptionalContent">
             <summary>
             Represents the optional content.
@@ -13353,6 +13718,70 @@
             <summary>
             Creates a new instance of <see cref="T:Patagames.Pdf.Net.Wrappers.OptionalContent.PdfOCUsage"/> and initialize it with specified dictionary
             </summary>
+            <param name="dictionary">The dictionary or indirect dictionary</param>
+        </member>
+        <member name="T:Patagames.Pdf.Net.Wrappers.PdfOutputIntent">
+            <summary>
+            Represents the output intent dictionary that provide a means for matching the color characteristics 
+            of a PDF document with those of a target output device or production environment in which the document will be printed.
+            </summary>
+        </member>
+        <member name="P:Patagames.Pdf.Net.Wrappers.PdfOutputIntent.Standard">
+            <summary>
+            Gets or sets the subtype (s) entry of a dictionary.
+            </summary>
+            <value>Required.</value>
+        </member>
+        <member name="P:Patagames.Pdf.Net.Wrappers.PdfOutputIntent.Condition">
+            <summary>
+            Gets or sets an ASCII string concisely identifying the intended output device or production condition in human-readable form. This is the preferred method of defining such a string for presentation to the user.
+            </summary>
+            <value>Optional.</value>
+        </member>
+        <member name="P:Patagames.Pdf.Net.Wrappers.PdfOutputIntent.ConditionId">
+            <summary>
+            Gets or sets an ASCII string identifying the intended output device or production condition in human- or machine-readable form.
+            </summary>
+            <value>Required.</value>
+            <remarks>
+            <para>A typical value for this entry would be the name of a production condition maintained in an industry-standard registry such as the ICC Characterization Data Registry. If the designated condition matches that in effect at production time, the production software is responsible for providing the corresponding ICC profile as defined in the registry.</para>
+            <para>If the intended production condition is not a recognized standard, the value of this entry may be Custom or an application specific, machine-readable name. The <see cref="P:Patagames.Pdf.Net.Wrappers.PdfOutputIntent.Profile"/> property defines the ICC profile, and the <see cref="P:Patagames.Pdf.Net.Wrappers.PdfOutputIntent.Info"/> property is used for further human-readable identification.</para>
+            </remarks>
+        </member>
+        <member name="P:Patagames.Pdf.Net.Wrappers.PdfOutputIntent.RegistryName">
+            <summary>
+            Gets or sets an ASCII string (conventionally a uniform resource identifier, or URI) identifying the registry in which the condition designated by <see cref="P:Patagames.Pdf.Net.Wrappers.PdfOutputIntent.ConditionId"/> is defined.
+            </summary>
+            <value>Optional.</value>
+        </member>
+        <member name="P:Patagames.Pdf.Net.Wrappers.PdfOutputIntent.Info">
+            <summary>
+            Gets or sets a human-readable text string containing additional information or comments about the intended target device or production condition.
+            </summary>
+            <value>Required if <see cref="P:Patagames.Pdf.Net.Wrappers.PdfOutputIntent.ConditionId"/> does not specify a standard production condition; optional otherwise.</value>
+        </member>
+        <member name="P:Patagames.Pdf.Net.Wrappers.PdfOutputIntent.Profile">
+            <summary>
+            Gets or sets an ICC profile stream defining the transformation from the PDF document’s source colors to output device colorants.
+            </summary>
+            <value>Required if <see cref="P:Patagames.Pdf.Net.Wrappers.PdfOutputIntent.ConditionId"/> does not specify a standard production condition; optional otherwise.</value>
+            <remarks>
+            The format of the profile stream is the same as that used in specifying an <see cref="T:Patagames.Pdf.Net.ColorSpace.CsICCBased"/> color space (see <a href="https://pdfium.patagames.com/help/html/WorkingSDK_ColorSpaces.htm">Working With Color Spaces</a>). The output transformation uses the profile’s “from CIE” information (BToA in ICC terminology); the “to CIE” (AToB) information can optionally be used to remap source color values to some other destination color space, such as for screen preview or hardcopy proofing.
+            </remarks>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Wrappers.PdfOutputIntent.#ctor(Patagames.Pdf.Net.PdfDocument,System.String,Patagames.Pdf.Enums.PdfStandard)">
+            <summary>
+            Creates new instance of <see cref="T:Patagames.Pdf.Net.Wrappers.PdfOutputIntent"/>.
+            </summary>
+            <param name="document">The PDF document.</param>
+            <param name="conditionId">An ASCII string identifying the intended output device or production condition in human- or machine-readable form.</param>
+            <param name="standard">The standard representing varying levels of conformance.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.Wrappers.PdfOutputIntent.#ctor(Patagames.Pdf.Net.PdfDocument,Patagames.Pdf.Net.BasicTypes.PdfTypeBase)">
+            <summary>
+            Creates a new instance of <see cref="T:Patagames.Pdf.Net.Wrappers.PdfOutputIntent"/> from the specified dictionary.
+            </summary>
+            <param name="document">The PDF document.</param>
             <param name="dictionary">The dictionary or indirect dictionary</param>
         </member>
         <member name="T:Patagames.Pdf.Net.Wrappers.PdfIconFit">
@@ -16260,6 +16689,13 @@
             </para>
             </remarks>
         </member>
+        <member name="M:Patagames.Pdf.Net.ColorSpace.CsICCBased.#ctor(Patagames.Pdf.Net.PdfDocument,Patagames.Pdf.Net.BasicTypes.PdfTypeStream)">
+            <summary>
+            Initialize new instance of the <see cref="T:Patagames.Pdf.Net.ColorSpace.CsICCBased"/> class;
+            </summary>
+            <param name="document">The PDF document.</param>
+            <param name="stream">A stream containing ICC based colorspace.</param>
+        </member>
         <member name="M:Patagames.Pdf.Net.ColorSpace.CsICCBased.#ctor(System.IntPtr)">
             <summary>
             Initialize new instance of the <see cref="T:Patagames.Pdf.Net.ColorSpace.CsICCBased"/> class;
@@ -16718,326 +17154,6 @@
             Initialize new instance of the <see cref="T:Patagames.Pdf.Net.ColorSpace.CsSeparation"/> class;
             </summary>
             <param name="handle">Hanfdle to color space object.</param>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.DomException">
-            <summary>
-            The exception that is thrown when an element is not present in the DOM.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.DomException.#ctor(Patagames.Pdf.Net.PdfField)">
-            <summary>
-            Initializes a new instance of the DomException class.
-            </summary>
-            <param name="field">The <see cref="T:Patagames.Pdf.Net.PdfField"/> on which the exception was thrown.</param>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.DomException.#ctor(Patagames.Pdf.Net.PdfControl)">
-            <summary>
-            Initializes a new instance of the DomException class.
-            </summary>
-            <param name="control">The <see cref="T:Patagames.Pdf.Net.PdfControl"/> on which the exception was thrown.</param>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.DomException.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the DomException class.
-            </summary>
-            <param name="message">The message that describes the error.</param>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.InvalidFunctionException">
-            <summary>
-             The exception that is thrown when the underlying Dictionary / Stream is not in the correct format.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.InvalidFunctionException.#ctor">
-            <summary>
-            Initializes a new instance of the InvalidFunctionException class.
-            </summary>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.TrialExpiredException">
-            <summary>
-            You are currently evaluating the library and the trial period is expired.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.TrialExpiredException.#ctor">
-            <summary>
-            Initializes a new instance of the TrialExpiredException class.
-            </summary>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.UnknownFunctionTypeException">
-            <summary>
-             The exception that is thrown when the type of a function cannot be recognized.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.UnknownFunctionTypeException.#ctor">
-            <summary>
-            Initializes a new instance of the UnknownFunctionTypeException class.
-            </summary>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.BadFormatException">
-            <summary>
-            The exception that is thrown when the PDF file is invalid.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.BadFormatException.#ctor">
-            <summary>
-            Initializes a new instance of the BadFormatException class.
-            </summary>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.FatalErrorException">
-            <summary>
-            Represents a fatal runtime error that occurs inside pdfium engine.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.FatalErrorException.#ctor(System.Exception)">
-            <summary>
-            Initializes a new instance of the UnknownErrorException class.
-            </summary>
-            <param name="innerException">The exception that is the cause of the current exception.</param>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.PdfFileNotFoundException">
-            <summary>
-            The exception that is thrown when an attempt to access a file that does not exist on disk fails.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.PdfFileNotFoundException.#ctor">
-            <summary>
-            Initializes a new instance of the PdfFileNotFoundException class.
-            </summary>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.FontNotFoundException">
-            <summary>
-             The exception that is thrown when the requested font was not found
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.FontNotFoundException.#ctor">
-            <summary>
-            Initializes a new instance of the FontNotFoundException class.
-            </summary>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.ImageObjectIsEmptyException">
-            <summary>
-            The exception that is thrown when the PdfImageObject don't contain PdfBitmap
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.ImageObjectIsEmptyException.#ctor">
-            <summary>
-            Initializes a new instance of the ImageObjectIsEmptyException class.
-            </summary>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.InvalidLicenseKeyException">
-            <summary>
-            The exception that is thrown when the key provided to a initialization method is not valid.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.InvalidLicenseKeyException.#ctor">
-            <summary>
-            Initializes a new instance of the InvalidLicenseKeyException class.
-            </summary>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.EntryNotFoundException">
-            <summary>
-             The exception that is thrown when the dictionary's entry was not found
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.EntryNotFoundException.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the FontNotFoundException class.
-            </summary>
-            <param name="entryName">Entry name.</param>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.PdfParserException">
-            <summary>
-            This exception is commonly raised when a PDF object cannot be parsed.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.PdfParserException.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the PdfParserException class.
-            </summary>
-            <param name="message">Exception message.</param>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.InvalidPasswordException">
-            <summary>
-            This exception is commonly raised when the password for a PDF file does not match.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.InvalidPasswordException.#ctor">
-            <summary>
-            Initializes a new instance of the InvalidPasswordException class.
-            </summary>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.LicenseKeyIsExpiredException">
-            <summary>
-            The exception that is thrown when the key provided to a initialization method is expired.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.LicenseKeyIsExpiredException.#ctor">
-            <summary>
-            Initializes a new instance of the LicenseKeyIsExpiredException class.
-            </summary>
-            <remarks>
-            <para>This usually indicates that the trial key has expired. The regular license key never expires.</para>
-            </remarks>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.LicenseKeyIsOutOfDateException">
-            <summary>
-            The exception that is thrown when the key provided to a initialization method is out of date.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.LicenseKeyIsOutOfDateException.#ctor">
-            <summary>
-            Initializes a new instance of the LicenseKeyIsOutOfDateException class.
-            </summary>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.MemoryLeakException">
-            <summary>
-            The exception that is thrown when the undisposed instance of class was found.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.MemoryLeakException.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the MemoryLeakException class.
-            </summary>
-            <param name="className">A class name there memory leak was detected.</param>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.NoLicenseException">
-            <summary>
-             The exception that is thrown only in trial mode
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.NoLicenseException.#ctor(System.UInt32)">
-            <summary>
-            Initializes a new instance of the NoLicenseException class.
-            </summary>
-            <param name="errorCode">Error code.</param>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.NoLicenseException.#ctor(System.UInt32,System.String)">
-            <summary>
-            Initializes a new instance of the NoLicenseException class.
-            </summary>
-            <param name="message">The error message that explains the reason for the exception.</param>
-            <param name="errorCode">Error code.</param>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.NoLicenseException.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the NoLicenseException class.
-            </summary>
-            <param name="message">The error message that explains the reason for the exception.</param>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.NotAvailableException">
-            <summary>
-            The exception that is thrown when the element (document, page, forms and etc) is not yet available.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.NotAvailableException.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Patagames.Pdf.Net.Exceptions.NotAvailableException"/> class with a specified error message.
-            </summary>
-            <param name="message">The error message that explains the reason for the exception.</param>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.PageNotFoundException">
-            <summary>
-             The exception that is thrown when the requested page was not found in PDF document
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.PageNotFoundException.#ctor">
-            <summary>
-            Initializes a new instance of the PageNotFoundException class.
-            </summary>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.PdfiumException">
-            <summary>
-            Represents errors that occur inside Pdfium SDK.
-            </summary>
-        </member>
-        <member name="P:Patagames.Pdf.Net.Exceptions.PdfiumException.ErrorCode">
-            <summary>
-            Gets a code that provide additional information about the exception.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.PdfiumException.#ctor(System.UInt32,System.String)">
-            <summary>
-            Initializes a new instance of the PdfiumException class.
-            </summary>
-            <param name="errorCode">Error code.</param>
-            <param name="message">The error message that explains the reason for the exception.</param>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.PdfiumException.#ctor(System.UInt32,System.String,System.Exception)">
-            <summary>
-            Initializes a new instance of the PdfiumException class.
-            </summary>
-            <param name="errorCode">Error code</param>
-            <param name="message">The error message that explains the reason for the exception.</param>
-            <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.PdfiumException.#ctor(System.UInt32)">
-            <summary>
-            Initializes a new instance of the PdfiumException class.
-            </summary>
-            <param name="errorCode">Error code.</param>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.RequiredDataIsAbsentException">
-            <summary>
-            The exception that is thrown when the required data is absent.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.RequiredDataIsAbsentException.#ctor">
-            <summary>
-            Initializes a new instance of the RequiredDataIsAbsentException class.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.RequiredDataIsAbsentException.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the RequiredDataIsAbsentException class.
-            </summary>
-            <param name="message">Exception message.</param>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.UnexpectedTypeException">
-            <summary>
-            This exception is commonly raised when the annotation cannot be parsed.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.UnexpectedTypeException.#ctor(System.Type,System.Type)">
-            <summary>
-            Initializes a new instance of the InvalidAnnotationException class.
-            </summary>
-            <param name="expected">Expected type.</param>
-            <param name="actual">Actual type.</param>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.UnknownErrorException">
-            <summary>
-            Represents a fatal runtime error that occurs inside Pdfium SDK.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.UnknownErrorException.#ctor">
-            <summary>
-            Initializes a new instance of the UnknownErrorException class.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.UnknownErrorException.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the UnknownErrorException class.
-            </summary>
-            <param name="message">The error message that explains the reason for the exception.</param>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.UnsupportedImageFormatException">
-            <summary>
-            The exception that is thrown when the PDFBitmap  can't be converted into .Net GDI+ Image
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.UnsupportedImageFormatException.#ctor">
-            <summary>
-            Initializes a new instance of the UnsupportedImageFormatException class.
-            </summary>
-        </member>
-        <member name="T:Patagames.Pdf.Net.Exceptions.UnsupportedSecuritySchemeException">
-            <summary>
-            Unsupported security scheme exception.
-            </summary>
-        </member>
-        <member name="M:Patagames.Pdf.Net.Exceptions.UnsupportedSecuritySchemeException.#ctor">
-            <summary>
-            Initializes a new instance of the UnknownErrorException class.
-            </summary>
         </member>
         <member name="T:Patagames.Pdf.Net.FdfFieldItem">
             <summary>
@@ -18771,6 +18887,93 @@
             Returns an enumerator that iterates through the collection.
             </summary>
             <returns>A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.</returns>
+        </member>
+        <member name="T:Patagames.Pdf.Net.PdfOutputIntentItem">
+            <summary>
+            An item of <see cref="T:Patagames.Pdf.Net.PdfOutputIntentsCollection"/>.
+            </summary>
+        </member>
+        <member name="P:Patagames.Pdf.Net.PdfOutputIntentItem.Dictionary">
+            <summary>
+            Gets the dictionary associated with this outpt intent
+            </summary>
+        </member>
+        <member name="P:Patagames.Pdf.Net.PdfOutputIntentItem.Standard">
+            <summary>
+            Gets or sets the version of PDF standard.
+            </summary>
+            <value>Required.</value>
+        </member>
+        <member name="P:Patagames.Pdf.Net.PdfOutputIntentItem.Condition">
+            <summary>
+            Gets or sets an ASCII string concisely identifying the intended output device or production condition in human-readable form. This is the preferred method of defining such a string for presentation to the user.
+            </summary>
+            <value>Optional.</value>
+        </member>
+        <member name="P:Patagames.Pdf.Net.PdfOutputIntentItem.ConditionId">
+            <summary>
+            Gets or sets an ASCII string identifying the intended output device or production condition in human- or machine-readable form.
+            </summary>
+            <value>Required.</value>
+            <remarks>
+            <para>A typical value for this entry would be the name of a production condition maintained in an industry-standard registry such as the ICC Characterization Data Registry. If the designated condition matches that in effect at production time, the production software is responsible for providing the corresponding ICC profile as defined in the registry.</para>
+            <para>If the intended production condition is not a recognized standard, the value of this entry may be Custom or an application specific, machine-readable name. The <see cref="!:ProfileData"/> property defines the ICC profile, and the <see cref="P:Patagames.Pdf.Net.PdfOutputIntentItem.Info"/> property is used for further human-readable identification.</para>
+            </remarks>
+        </member>
+        <member name="P:Patagames.Pdf.Net.PdfOutputIntentItem.RegistryName">
+            <summary>
+            Gets or sets an ASCII string (conventionally a uniform resource identifier, or URI) identifying the registry in which the condition designated by <see cref="P:Patagames.Pdf.Net.PdfOutputIntentItem.ConditionId"/> is defined.
+            </summary>
+            <value>Optional.</value>
+        </member>
+        <member name="P:Patagames.Pdf.Net.PdfOutputIntentItem.Info">
+            <summary>
+            Gets or sets a human-readable text string containing additional information or comments about the intended target device or production condition.
+            </summary>
+            <value>Required if <see cref="P:Patagames.Pdf.Net.PdfOutputIntentItem.ConditionId"/> does not specify a standard production condition; optional otherwise.</value>
+        </member>
+        <member name="P:Patagames.Pdf.Net.PdfOutputIntentItem.Profile">
+            <summary>
+            Gets or sets an ICC profile defining the transformation from the PDF document’s source colors to output device colorants.
+            </summary>
+            <value>Required if <see cref="P:Patagames.Pdf.Net.PdfOutputIntentItem.ConditionId"/> does not specify a standard production condition; optional otherwise.</value>
+            <remarks>
+            The format of the profile stream is the same as that used in specifying an <see cref="T:Patagames.Pdf.Net.ColorSpace.CsICCBased"/> color space (see <a href="https://pdfium.patagames.com/help/html/WorkingSDK_ColorSpaces.htm">Working With Color Spaces</a>). The output transformation uses the profile’s “from CIE” information (BToA in ICC terminology); the “to CIE” (AToB) information can optionally be used to remap source color values to some other destination color space, such as for screen preview or hardcopy proofing.
+            </remarks>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfOutputIntentItem.#ctor(Patagames.Pdf.Net.PdfDocument,System.String,Patagames.Pdf.Enums.PdfStandard)">
+            <summary>
+            Create new output intent item.
+            </summary>
+            <param name="document">The PDF document.</param>
+            <param name="conditionId">An ASCII string identifying the intended output device or production condition in human- or machine-readable form.</param>
+            <param name="standard">The standard representing varying levels of conformance.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfOutputIntentItem.#ctor(Patagames.Pdf.Net.PdfDocument,Patagames.Pdf.Net.BasicTypes.PdfTypeBase)">
+            <summary>
+            Creates a new instance of <see cref="T:Patagames.Pdf.Net.Wrappers.PdfOutputIntent"/> from the specified dictionary.
+            </summary>
+            <param name="document"></param>
+            <param name="dict"></param>
+        </member>
+        <member name="T:Patagames.Pdf.Net.PdfOutputIntentsCollection">
+            <summary>
+            A collection of output intents describing the color characteristics of output devices on which the document might be rendered.
+            </summary>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfOutputIntentsCollection.#ctor(Patagames.Pdf.Net.PdfDocument,Patagames.Pdf.Net.BasicTypes.PdfTypeBase)">
+            <summary>
+            Initialize new instance of <see cref="T:Patagames.Pdf.Net.PdfOutputIntentsCollection"/> class.
+            </summary>
+            <param name="document">The PDF document.</param>
+            <param name="array">Direct or indirect <see cref="T:Patagames.Pdf.Net.BasicTypes.PdfTypeArray"/> whose elements are used to initialize this collection.</param>
+            <exception cref="T:System.ArgumentNullException">The required parameter <paramref name="array"/> is null.</exception>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfOutputIntentsCollection.#ctor(Patagames.Pdf.Net.PdfDocument)">
+            <summary>
+            Creates a new empty collection.
+            </summary>
+            <param name="doc">The PDF document.</param>
         </member>
         <member name="T:Patagames.Pdf.Net.PdfLabelingRanges">
             <summary>
@@ -20616,6 +20819,15 @@
             </summary>
             <param name="rect">A <see cref="T:Patagames.Pdf.FS_RECTF"/> that represents the rectangle to add.</param>
         </member>
+        <member name="M:Patagames.Pdf.Net.PathPointsCollection.AppendLine(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Adds a line to this path.
+            </summary>
+            <param name="x1">The x-coordinate of the start of a new line.</param>
+            <param name="y1">The y-coordinate of the start of a new line.</param>
+            <param name="x2">The x-coordinate of the end of a line.</param>
+            <param name="y2">The y-coordinate of the end of a line.</param>
+        </member>
         <member name="M:Patagames.Pdf.Net.PathPointsCollection.AppendCircle(Patagames.Pdf.FS_CIRCLEF)">
             <summary>
             Adds a circle to this path.
@@ -21192,6 +21404,74 @@
             </summary>
             <param name="opacity">The level of opacity for the page object. 0 - transparent; 1 - opaque.</param>
             <param name="isStroke">Flag indicating whether to set opacity for the stroke or for the fill color.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageObject.Move(System.Single,System.Single,System.Boolean)">
+            <summary>
+            Move the page object to the specified point.
+            </summary>
+            <param name="x">Specifies the x-coordinate of the new position, in user space units.</param>
+            <param name="y">Specifies the y-coordinate of the new position, in user space units.</param>
+            <param name="affectClippingPath">A flag indicating that the transformation must also be applied to the clipping path.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageObject.Translate(System.Single,System.Single,System.Boolean)">
+            <summary>
+            Move the page object by the specified distance.
+            </summary>
+            <param name="dx">Specifies the x-axis distance, in user space units, that the page object should be moved.</param>
+            <param name="dy">Specifies the y-axis distance, in user space units, that the page object should be moved.</param>
+            <param name="affectClippingPath">A flag indicating that the transformation must also be applied to the clipping path.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageObject.Rotate(System.Single,System.Boolean)">
+            <summary>
+            Rotate counterclockwise the specified number of radians around the center of the page object.
+            </summary>
+            <param name="rad">Radians by which to rotate the page object.</param>
+            <param name="affectClippingPath">A flag indicating that the transformation must also be applied to the clipping path.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageObject.Rotate(System.Single,System.Single,System.Single,System.Boolean)">
+            <summary>
+            Rotate counterclockwise the specified number of radians around the specified point.
+            </summary>
+            <param name="rad">Radians by which to rotate the page object.</param>
+            <param name="x">Specifies the x-coordinate of the pivot point, in user space units.</param>
+            <param name="y">Specifies the y-coordinate of the pivot point, in user space units.</param>
+            <param name="affectClippingPath">A flag indicating that the transformation must also be applied to the clipping path.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageObject.Scale(System.Single,System.Single,System.Boolean)">
+            <summary>
+            Scale the page object by the specified scaling factors around the center of the page object.
+            </summary>
+            <param name="sx">The horizontal scaling factor.</param>
+            <param name="sy">The vertical scaling factor.</param>
+            <param name="affectClippingPath">A flag indicating that the transformation must also be applied to the clipping path.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageObject.Scale(System.Single,System.Single,System.Single,System.Single,System.Boolean)">
+            <summary>
+            Scale the page object by the specified scaling factors around the specified point.
+            </summary>
+            <param name="sx">The horizontal scaling factor.</param>
+            <param name="sy">The vertical scaling factor.</param>
+            <param name="x">Specifies the x-coordinate of the pivot point, in user space units.</param>
+            <param name="y">Specifies the y-coordinate of the pivot point, in user space units.</param>
+            <param name="affectClippingPath">A flag indicating that the transformation must also be applied to the clipping path.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageObject.Shear(System.Single,System.Single,System.Boolean)">
+            <summary>
+            Shear the page object by the specified shear factors around the center of the page object.
+            </summary>
+            <param name="sx">The horizontal shear factor.</param>
+            <param name="sy">The vertical shear factor.</param>
+            <param name="affectClippingPath">A flag indicating that the transformation must also be applied to the clipping path.</param>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfPageObject.Shear(System.Single,System.Single,System.Single,System.Single,System.Boolean)">
+            <summary>
+            Shear the page object by the specified shear factors around the specified point.
+            </summary>
+            <param name="sx">The horizontal shear factor.</param>
+            <param name="sy">The vertical shear factor.</param>
+            <param name="x">Specifies the x-coordinate of the pivot point, in user space units.</param>
+            <param name="y">Specifies the y-coordinate of the pivot point, in user space units.</param>
+            <param name="affectClippingPath">A flag indicating that the transformation must also be applied to the clipping path.</param>
         </member>
         <member name="T:Patagames.Pdf.Net.PdfPathObject">
             <summary>
@@ -23371,6 +23651,11 @@
             Gets or sets the properties of optional content groups.
             </summary>
         </member>
+        <member name="P:Patagames.Pdf.Net.PdfDocument.OutputIntents">
+            <summary>
+            Gets or sets the collection of output intents describing the color characteristics of output devices on which the document might be rendered.
+            </summary>
+        </member>
         <member name="M:Patagames.Pdf.Net.PdfDocument.#ctor(System.IntPtr,Patagames.Pdf.Net.PdfAvailabilityProvider,Patagames.Pdf.Net.PdfCustomLoader)">
             <summary>
             Initializes a new instance of the PdfDocument class.
@@ -23580,6 +23865,15 @@
             software vendors may be required to license RC4 to develop software that encrypts
             or decrypts PDF documents.</note>
             </remarks>
+        </member>
+        <member name="M:Patagames.Pdf.Net.PdfDocument.GenerateMetadata(System.String,System.String,System.DateTime,System.DateTime)">
+            <summary>
+            Generate a metadata stream containing metadata for the document.
+            </summary>
+            <param name="part">The part of the PDF/A standard. May be 1, 2, 3, or 4</param>
+            <param name="level">The PDF/A conformance level. A, B, U</param>
+            <param name="creationDate">The date and time the document was created, which will be set both in the metadata and in the <see cref="P:Patagames.Pdf.Net.PdfDocument.CreationDate"/>. The default value means that the current DateTime value will be set.</param>
+            <param name="modificationDate">The date and time the document was most recently modified, which will be set both in the metadata and in the <see cref="P:Patagames.Pdf.Net.PdfDocument.ModificationDate"/>. The default value means that the current DateTime value will be set.</param>
         </member>
         <member name="T:Patagames.Pdf.Net.PdfFind">
             <summary>
@@ -31113,6 +31407,17 @@
             <param name="rect">A <see cref="T:Patagames.Pdf.FS_RECTF"/> that represents the rectangle to add.</param>
             <remarks>This method internally calls the <see cref="M:Patagames.Pdf.Pdfium.FPDFPath_AddPointCount(System.IntPtr,System.Int32)"/> method.</remarks>
         </member>
+        <member name="M:Patagames.Pdf.Pdfium.FPDFPath_AppendLine(System.IntPtr,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Adds a rectangle to the path.
+            </summary>
+            <param name="path">Handle to the destination path returned by <see cref="M:Patagames.Pdf.Pdfium.FPDFPath_Create"/> or <see cref="M:Patagames.Pdf.Pdfium.FPDFPathObj_GetPath(System.IntPtr)"/>.</param>
+            <param name="x1">The x-coordinate of the start of a new line.</param>
+            <param name="y1">The y-coordinate of the start of a new line.</param>
+            <param name="x2">The x-coordinate of the end of a line.</param>
+            <param name="y2">The y-coordinate of the end of a line.</param>
+            <remarks>This method internally calls the <see cref="M:Patagames.Pdf.Pdfium.FPDFPath_AddPointCount(System.IntPtr,System.Int32)"/> method.</remarks>
+        </member>
         <member name="M:Patagames.Pdf.Pdfium.FPDFPath_Copy(System.IntPtr,System.IntPtr)">
             <summary>
             Copy points from one Path to another.
@@ -34750,6 +35055,21 @@
              Localized resource similar to "The object being set is associated with another document."
             </summary>
         </member>
+        <member name="P:Patagames.Pdf.Properties.Error.err0081">
+            <summary>
+              Localized resource similar to "There was a mismatch between the processor architecture of the project being built and the processor architecture of the 'pdfium.dll'"
+            </summary>
+        </member>
+        <member name="P:Patagames.Pdf.Properties.Error.err0082">
+            <summary>
+              Localized resource similar to "The file name must be 'pdfium.dll' or 'libpdfium.dylib'."
+            </summary>
+        </member>
+        <member name="P:Patagames.Pdf.Properties.Error.err0083">
+            <summary>
+              Localized resource similar to "The required entry is missing. Entry name:{0}."
+            </summary>
+        </member>
         <member name="P:Patagames.Pdf.Properties.Error.errLicense1">
             <summary>
             Localized resource similar to "You need to have at least a Developer Small Business License to be able  to complete this operation."
@@ -34859,6 +35179,11 @@
         <member name="P:Patagames.Pdf.Properties.Resources.RuberStampDraft">
             <summary>
               Looks up a localized string similar to "Draft".
+            </summary>
+        </member>
+        <member name="P:Patagames.Pdf.Properties.Resources.Metadata">
+            <summary>
+              Looks up a localized string similar to "Metadata".
             </summary>
         </member>
         <member name="T:Patagames.Pdf.REFOBJ">
