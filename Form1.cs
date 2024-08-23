@@ -93,7 +93,7 @@ namespace pdfRemoveWaterMark
             cb_isImage_CheckedChanged(cb_isImage, null);
             if (!isSetSuccess)
             {
-                MessageBox.Show("not run in administrator!!!", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show("not run in administrator!!!", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -381,6 +381,12 @@ _exit:
                     {
                         File.Copy(splitPdfFilePath, outputPdfFilePath, true);
                         AppendLog(string.Format("pages: {0} text , save error:{1}", pageNum, ex.Message));
+                        string errorMsgExpired = "The trial period for Pdfium.Net SDK has expired";
+                        if (ex.Message.Contains(errorMsgExpired))
+                        {
+                            msg = string.Empty;
+                            return false;
+                        }
                         continue;
                     }
 
@@ -644,6 +650,12 @@ _exit:
             Thread.Sleep(50);
 
             string fileName = fileNameObj.ToString();
+
+            if (!File.Exists(fileName))
+            {
+                AppendLog("step 0: file not exist");
+                return;
+            }
             iText7 itext7 = new iText7(AppendLog);
             string msg;
             ClearWorkTemp(g_outputImagePath); // clear last record

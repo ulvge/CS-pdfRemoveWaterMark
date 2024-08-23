@@ -63,6 +63,26 @@ namespace pdfRemoveWaterMark.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap dump_300K {
+            get {
+                object obj = ResourceManager.GetObject("dump_300K", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap dump_600K {
+            get {
+                object obj = ResourceManager.GetObject("dump_600K", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap wh {
             get {
                 object obj = ResourceManager.GetObject("wh", resourceCulture);

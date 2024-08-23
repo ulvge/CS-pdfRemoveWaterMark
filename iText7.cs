@@ -1,12 +1,19 @@
-﻿using iText.Kernel.Geom;
+﻿using iText.IO.Font.Constants;
+using iText.IO.Image;
+using iText.Kernel.Font;
+using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Data;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using iText.Kernel.Pdf.Navigation;
 using iText.Kernel.Utils;
+using iText.Layout;
+using iText.Layout.Element;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -36,6 +43,92 @@ namespace pdfRemoveWaterMark
             }
             return false;
         }
+        /// <summary>
+        /// 是否被限制
+        /// </summary>
+        /// <param name="fileSize"></param>
+        /// <returns>false，不限制;  true, 限制</returns>
+        private bool IsLicenseLimit(long fileSize, out float decimalPart)
+        {
+            float mb = fileSize / (1024 * 1024);
+            decimalPart = mb - (float)Math.Floor(mb);
+            if (mb < 1.0f)
+            {
+                return false;
+            }
+            if (mb > 10.0f)
+            {
+                return false;
+            }
+            if (decimalPart > 0.5)
+            {
+                return false;
+            }
+            return true;
+        }
+        /// <summary>
+        /// 如果文档大小在license限制条件中，则append 一个bmp
+        /// </summary>
+        private void PdfSplitAppendObject(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                return;
+            }
+            FileInfo fileInfo = new FileInfo(filePath);
+            long fileLength = fileInfo.Length;
+            Console.WriteLine($"文件大小: {fileLength / 1024} kb,{fileLength / 1024/1024} mb");
+            try
+            {
+                float decimalPart;
+                if (IsLicenseLimit(fileLength, out decimalPart))
+                {
+                    string tempFilePath = filePath.ToLower().Replace(".pdf", "_tmp.pdf");
+                    // 打开现有的 PDF 文档
+                    WriterProperties writerProperties = new WriterProperties().SetCompressionLevel(CompressionConstants.NO_COMPRESSION);
+                    PdfDocument pdfDocument = new PdfDocument(new PdfReader(filePath), new PdfWriter(tempFilePath, writerProperties));
+
+                    // 获取要添加图片的页面 (例如第 1 页)
+                    PdfPage page = pdfDocument.GetPage(1);
+                    // 使用 PdfCanvas 来进行页面操作
+                    PdfCanvas canvas = new PdfCanvas(page);
+                    // 从资源中获取 BMP 图片
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        // 将资源中的图片保存到 MemoryStream 中
+                        if (decimalPart < 0.3f)
+                        {
+                            Properties.Resources.dump_600K.Save(ms, ImageFormat.Bmp);
+                        }
+                        else
+                        {
+                            Properties.Resources.dump_300K.Save(ms, ImageFormat.Bmp);
+                        }
+
+                        // 将 MemoryStream 转换为 iText7 可用的 ImageData 对象
+                        ImageData imageData = ImageDataFactory.Create(ms.ToArray());
+
+                        // 创建 iText7 图片对象
+                        Image img = new Image(imageData);
+
+                        canvas.AddImageAt(imageData, 100, 100,false);
+                    }
+                    // 关闭文档
+                    pdfDocument.Close();
+
+                    // 将生成的临时文件替换原始文件
+                    File.Delete(filePath);  // 删除原始文件
+                    File.Move(tempFilePath, filePath);  // 将临时文件重命名为原始文件名
+                    Console.WriteLine("图像已成功添加到页面中！");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+
         public bool PdfSplit(string splitTempFolder, string oriFileName, out string msg)
         {
             try
@@ -66,8 +159,10 @@ namespace pdfRemoveWaterMark
                     oriFileDoc.CopyPagesTo(pageNum, pageNum, outputPdfDocument);
                     outputPdfDocument.FlushCopiedObjects(oriFileDoc);
                     appendLog($"Page {pageNum} saved to: {outputPdfFilePath}", false);
-                    outputPdfDocument.Close();
+                    outputPdfDocument.Close();  // write file
                     pdfWriter.Close();
+
+                    PdfSplitAppendObject(outputPdfFilePath);
                 }
                 oriFileDoc.Close();
                 oriFilePdfReader.Close();
