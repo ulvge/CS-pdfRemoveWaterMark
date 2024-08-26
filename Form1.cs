@@ -295,15 +295,17 @@ namespace pdfRemoveWaterMark
             {
                 var rect = obj.BoundingBox;
                 maxRect.left = Math.Min(maxRect.left, rect.left);
+                maxRect.bottom = Math.Min(maxRect.bottom, rect.bottom);
+
                 maxRect.top = Math.Max(maxRect.top, rect.top);
                 maxRect.right = Math.Max(maxRect.right, rect.right);
-                maxRect.bottom = Math.Min(maxRect.bottom, rect.bottom);
             }
 
             maxRect.left = Math.Max(maxRect.left - expandValue, 0);
-            maxRect.top = Math.Max(maxRect.top - expandValue, 0);
+            maxRect.bottom = Math.Max(maxRect.bottom - expandValue, 0);
+
+            maxRect.top += expandValue;
             maxRect.right += expandValue;
-            maxRect.bottom += expandValue;
             return maxRect;
         }
         /// <summary>
@@ -314,35 +316,42 @@ namespace pdfRemoveWaterMark
         {
             try
             {
+                if (objectList.Count == 0)
+                {
+                    return;
+                }
                 // Create a new PDF document
                 PdfDocument doc = PdfDocument.CreateNew();
                 FS_RECTF pageSize = CalculateMaxRectangle(objectList);
                 // Step 2: Add new page
                 // Arguments: page width: 8.27", page height: 11.69", Unit of measure: inches
                 //  The PDF unit of measure is point. There are 72 points in one inch.
-                var page = doc.Pages.InsertPageAt(doc.Pages.Count, pageSize.Width, pageSize.Height);
+                var page = doc.Pages.InsertPageAt(doc.Pages.Count, pageSize.right, pageSize.top);
 
                 foreach (PdfPageObject item in objectList)
                 {
                     page.PageObjects.Add(item);
                 }
-                // Step 5: Generate page content and save pdf file
-                // argument: PDF file name
                 page.GenerateContent();
 
                 doc.Save(fileName, SaveFlags.NoIncremental);
-                doc.Dispose();
+                //doc.Dispose();
             }
             catch (Exception ex)
             {
                 AppendLog(ex.Message);
             }
         }
+        
         /// <summary>
-        /// 找出所有相同的object,not delete
+        /// 找出连续两张页面中，相同的object,存放到foundPageObj
         /// </summary>
+        /// <param name="foundPageObj">存放obj的变量</param>
         /// <param name="itext7"></param>
-        private List<PdfPageObject> AutoFindSameObject(iText7 itext7, int searchStartPageNum)
+        /// <param name="searchStartPageNum"> 查找时，起始页</param>
+        /// <returns>因为查找到的内容，虽然已经clone到了foundPageObj中，但仍然不能释放doc，否则后面存储到单独文件时，会出现对象已释放的错误。
+        /// 所以先保存需要释放的doc，后续再择机释放</returns>
+        private List<PdfDocument> AutoFindPaintSameObject(List<PdfPageObject> foundPageObj, iText7 itext7, int searchStartPageNum)
         {
             if (g_pageNumber <= 1)
             {
@@ -350,8 +359,10 @@ namespace pdfRemoveWaterMark
                 return null;
             }
             int validPageCount = 0;
-            List<PdfPageObject> foundPageObj = new List<PdfPageObject>();
-            PdfDocument baseDoc = null;
+            PdfDocument baseDoc = null; // 基础页
+            PdfDocument ref1Doc = null; // 参考页1， 和baseDoc比较，相同，则添加到list
+            PdfDocument ref2Doc = null; // 参考页2， 进一步筛选list
+            List<PdfDocument> pdfNeedRelease = new List<PdfDocument>();
             for (int pageNum = searchStartPageNum; pageNum <= g_pageNumber; pageNum++)
             {
                 if (!itext7.IsPageInPageRange(pageNum))
@@ -382,7 +393,10 @@ namespace pdfRemoveWaterMark
                                 }
                             }
                         }
-                        document.Dispose();
+                        //document.Dispose();
+                        ref1Doc = document;
+                        pdfNeedRelease.Add(ref1Doc);
+                        //goto _exit;
                         break;
                     case 2://进一步筛选list，查看在剩下页中，某个元素x,是否存在于list中，如果存在，则保留，说明是共有的；不存在，则将list中的x删掉
                         for (int found = foundPageObj.Count - 1; found >= 0; found--)
@@ -408,8 +422,9 @@ namespace pdfRemoveWaterMark
                                 foundPageObj.RemoveAt(found);
                             }
                         }
-
-                        document.Dispose();
+                        
+                        ref2Doc = document;
+                        pdfNeedRelease.Add(ref2Doc);
                         goto _exit;
                     default:
                         break;
@@ -421,7 +436,7 @@ _exit:
             {
                 baseDoc.Dispose();
             }
-            return foundPageObj;
+            return pdfNeedRelease;
         }
         /// <summary>
         /// 当既没有设定水印是图片，也没有设定是文本的时候，就用自动搜索到的每页都存在的obj,foundSameObject，
@@ -490,6 +505,7 @@ _exit:
                 Console.WriteLine(ex.Message);
             }
         }
+        List<PdfPageObject> foundSameObjectList = new List<PdfPageObject>();
         /// <summary>
         /// 删除 水印
         /// </summary>
@@ -507,10 +523,17 @@ _exit:
             }
             try
             {
-                List<PdfPageObject> foundSameObjectList = new List<PdfPageObject>();
+                foundSameObjectList.Clear();
                 if (!cb_isText.Checked && !cb_isImage.Checked) {
-                    foundSameObjectList = AutoFindSameObject(itext7, WARTERMARK_SEARCH_START_PAGE_NUM);
-                    //CreatePdfWithObjects(foundSameObjectList, TEMP_PURE + "\\sameObj.pdf");
+                    List<PdfDocument> releaseDocLater = AutoFindPaintSameObject(foundSameObjectList, itext7, WARTERMARK_SEARCH_START_PAGE_NUM);
+                    CreatePdfWithObjects(foundSameObjectList, TEMP_PURE + "\\sameObj.pdf");
+                    foreach (var item in releaseDocLater)
+                    {
+                        if (item != null)
+                        {
+                            item.Dispose();
+                        }
+                    }
                     AppenDumpImageToList(foundSameObjectList);
                 }
                 for (int pageNum = 1; pageNum <= g_pageNumber; pageNum++)
@@ -523,7 +546,7 @@ _exit:
                     bool isTextMatchSuccess = false;
                     string splitPdfFilePath = Path.Combine(TEMP_SPLIT, $"{pageNum}.pdf");
                     string outputPdfFilePath = Path.Combine(TEMP_PURE, $"{pageNum}.pdf");
-                    Console.WriteLine("start processing file: " + outputPdfFilePath);
+                    AppendLog("start processing page: " + pageNum);
                     PdfDocument document;
                     try
                     {
@@ -669,7 +692,8 @@ _exit:
             }
 
             //Save image to disk
-            string fileName = page + "_" + idx + "--wh_" + (int)imageObject.BoundingBox.Width + "x" + (int)imageObject.BoundingBox.Height;
+            string fileName = page + "_" + idx + "--wh_" + (int)imageObject.BoundingBox.Width + "x" + (int)imageObject.BoundingBox.Height +
+                "_l_" + (int)imageObject.BoundingBox.left + "_b_" + (int)imageObject.BoundingBox.bottom;
             var path = string.Format(savePath + "\\"+ fileName + ".png");
             imageObject.Bitmap.Image.Save(path, ImageFormat.Png);
             imageObject.Dispose();

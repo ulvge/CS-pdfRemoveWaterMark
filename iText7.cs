@@ -86,7 +86,9 @@ namespace pdfRemoveWaterMark
                     string tempFilePath = filePath.ToLower().Replace(".pdf", "_tmp.pdf");
                     // 打开现有的 PDF 文档
                     WriterProperties writerProperties = new WriterProperties().SetCompressionLevel(CompressionConstants.NO_COMPRESSION);
-                    PdfDocument pdfDocument = new PdfDocument(new PdfReader(filePath), new PdfWriter(tempFilePath, writerProperties));
+                    PdfReader pdfReader = new PdfReader(filePath);
+                    PdfWriter pdfWriter = new PdfWriter(tempFilePath, writerProperties);
+                    PdfDocument pdfDocument = new PdfDocument(pdfReader, pdfWriter);
 
                     // 获取要添加图片的页面 (例如第 1 页)
                     PdfPage page = pdfDocument.GetPage(1);
@@ -308,7 +310,7 @@ namespace pdfRemoveWaterMark
                 {
                     for (int pageNum = 1; pageNum <= oriFileDocument.GetNumberOfPages(); pageNum++)
                     {
-                        if (pageNum % 50 == 100)
+                        if (pageNum % 20 == 0)
                         {
                             GC.Collect();
                         }
