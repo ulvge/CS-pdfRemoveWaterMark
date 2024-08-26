@@ -272,6 +272,14 @@ namespace pdfRemoveWaterMark
             }
             return false;
         }
+        private bool IsExistOverlapAccurately(FS_RECTF a, FS_RECTF b)
+        {
+            if (a.Equals(b))
+            {
+                return true;
+            }
+            return false;
+        }
         /// <summary>
         /// 根据查找到的所有obj，计算出最大的矩形外框，新建的查找到的文件中，页面尺寸，就用这个值
         /// </summary>
@@ -450,7 +458,7 @@ _exit:
             foreach (PdfPageObject item in foundSameObject)
             {
                 // 类型相同，并且尺寸相等
-                if (pageObjects.ObjectType.Equals(item.ObjectType) && IsExistOverlap(pageObjects.BoundingBox, item.BoundingBox))
+                if (pageObjects.ObjectType.Equals(item.ObjectType) && IsExistOverlapAccurately(pageObjects.BoundingBox, item.BoundingBox))
                 {
                     return true;
                 }
@@ -536,6 +544,8 @@ _exit:
                     }
                     AppenDumpImageToList(foundSameObjectList);
                 }
+                Color setColor;
+                bool isSpecifiedColor = ColorTools.ARGB2RGB(tb_color.Text, out setColor);
                 for (int pageNum = 1; pageNum <= g_pageNumber; pageNum++)
                 { 
                     if (!itext7.IsPageInPageRange(pageNum))
@@ -629,8 +639,6 @@ _exit:
                         }
                         else // is not text, no image,then, Automatic search watermark
                         {
-                            Color setColor;
-                            bool isSpecifiedColor = ColorTools.ARGB2RGB(tb_color.Text, out setColor);
                             if (isSpecifiedColor) // is color close
                             {
                                 if(SearchObjectByColor(pageObj.PageObjects[j], setColor))
