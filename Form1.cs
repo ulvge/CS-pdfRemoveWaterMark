@@ -542,8 +542,8 @@ _exit:
                             item.Dispose();
                         }
                     }
-                    AppenDumpImageToList(foundSameObjectList);
                 }
+                AppenDumpImageToList(foundSameObjectList);
                 Color setColor;
                 bool isSpecifiedColor = ColorTools.ARGB2RGB(tb_color.Text, out setColor);
                 for (int pageNum = 1; pageNum <= g_pageNumber; pageNum++)
@@ -582,7 +582,13 @@ _exit:
                     {
                         FS_RECTF rect = pageObj.PageObjects[j].BoundingBox;
                         PointF outTolerance = new PointF(0, 0);
-                        if (cb_isText.Checked)
+                        // check ,if exist dump image
+                        if (SearchObjectFromSameFoundList(pageObj.PageObjects[j], foundSameObjectList))
+                        {
+                            removeCount++;
+                            pageObj.PageObjects.RemoveAt(j);
+                        }
+                        else if (cb_isText.Checked)
                         {
                             if (targetWatermarkFound == null)
                             {
@@ -637,23 +643,12 @@ _exit:
                                     break;
                             }
                         }
-                        else // is not text, no image,then, Automatic search watermark
+                        else if (isSpecifiedColor) // is color close
                         {
-                            if (isSpecifiedColor) // is color close
+                            if(SearchObjectByColor(pageObj.PageObjects[j], setColor))
                             {
-                                if(SearchObjectByColor(pageObj.PageObjects[j], setColor))
-                                {
-                                    removeCount++;
-                                    pageObj.PageObjects.RemoveAt(j);
-                                }
-                            }
-                            else
-                            {  // Finally, automatic processing
-                                if (SearchObjectFromSameFoundList(pageObj.PageObjects[j], foundSameObjectList))
-                                {
-                                    removeCount++;
-                                    pageObj.PageObjects.RemoveAt(j);
-                                }
+                                removeCount++;
+                                pageObj.PageObjects.RemoveAt(j);
                             }
                         }
                     }
