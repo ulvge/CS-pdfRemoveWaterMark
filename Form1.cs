@@ -535,7 +535,7 @@ _exit:
             try
             {
                 foundSameObjectList.Clear();
-                if (!cb_isText.Checked && !cb_isImage.Checked) {
+                if (!cb_isText.Checked && !cb_isImage.Checked && !checkBox_decryptOnly.Checked) {
                     List<PdfDocument> releaseDocLater = AutoFindPaintSameObject(foundSameObjectList, itext7, WARTERMARK_SEARCH_START_PAGE_NUM);
                     CreatePdfWithObjects(foundSameObjectList, TEMP_PURE + "\\sameObj.pdf");
                     foreach (var item in releaseDocLater)
