@@ -65,7 +65,7 @@ namespace pdfRemoveWaterMark
             AppendLog("\t1_0--wh_401x260.png,表示第1页的第0个水印，宽是401,高是260");
             AppendLog("关于水印按颜色来去除：");
             AppendLog("\t颜色格式，如果16进制，加上0x。");
-            AppendLog("即不选择文本，也不选择图片，而且颜色值也为空，则会自动识别每页中相同的部分，然后会当成水印而去除");
+            AppendLog("自动搜索到水印后，如果已经指定颜色。需要同时满足颜色相近，才会被确认为是真正的水印");
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -370,6 +370,10 @@ namespace pdfRemoveWaterMark
                 return null;
             }
             int validPageCount = 0;
+
+            Color setColor;
+            bool isSpecifiedColor = ColorTools.ARGB2RGB(tb_color.Text, out setColor);
+
             PdfDocument baseDoc = null; // 基础页
             PdfDocument ref1Doc = null; // 参考页1， 和baseDoc比较，相同，则添加到list
             PdfDocument ref2Doc = null; // 参考页2， 进一步筛选list
@@ -399,7 +403,13 @@ namespace pdfRemoveWaterMark
                                 }
                                 if (IsExistOverlap(pageObj.PageObjects[j].BoundingBox, bs.BoundingBox))
                                 {
-                                    foundPageObj.Add(pageObj.PageObjects[j].Clone());
+                                    // 虽然这两个元素相同，但还要看是否是用户指定 的颜色，只有颜色也匹配，才真的是想要去除的水印。
+                                    //没有指定颜色，或者指定的颜色相符
+                                    if (!isSpecifiedColor || (isSpecifiedColor && SearchObjectByColor(pageObj.PageObjects[j], setColor)))
+                                    {
+                                        foundPageObj.Add(pageObj.PageObjects[j].Clone());
+                                    }
+
                                     break;
                                 }
                             }
@@ -477,11 +487,10 @@ _exit:
         private bool SearchObjectByColor(PdfPageObject pageObjects, Color destColor)
         {
             Color SetColor;
-            bool isSpecifiedColor = ColorTools.ARGB2RGB(tb_color.Text, out SetColor);
 
             //有指定，则既要满足坐标，也要满足颜色
             float distance = ColorTools.RGBDistance(pageObjects.FillColor, destColor);
-            if (distance < 200)
+            if (distance < 20)
             {
                 Console.WriteLine("distance :" + distance);
                 return true;
@@ -644,14 +653,6 @@ _exit:
                                 case Patagames.Pdf.Enums.PageObjectTypes.PDFPAGE_TEXT:
                                 default:
                                     break;
-                            }
-                        }
-                        else if (isSpecifiedColor) // is color close
-                        {
-                            if(SearchObjectByColor(pageObj.PageObjects[j], setColor))
-                            {
-                                removeCount++;
-                                pageObj.PageObjects.RemoveAt(j);
                             }
                         }
                     }
