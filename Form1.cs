@@ -525,6 +525,7 @@ _exit:
                 Console.WriteLine(ex.Message);
             }
         }
+        /// 待去掉的列表：自动查找到的 相似水印 + dump image
         List<PdfPageObject> foundSameObjectList = new List<PdfPageObject>();
         /// <summary>
         /// 删除 水印
@@ -544,6 +545,7 @@ _exit:
             try
             {
                 foundSameObjectList.Clear();
+                //如果是自动查找相似的水印
                 if (!cb_isText.Checked && !cb_isImage.Checked && !checkBox_decryptOnly.Checked) {
                     List<PdfDocument> releaseDocLater = AutoFindPaintSameObject(foundSameObjectList, itext7, WARTERMARK_SEARCH_START_PAGE_NUM);
                     CreatePdfWithObjects(foundSameObjectList, TEMP_PURE + "\\sameObj.pdf");
@@ -555,6 +557,8 @@ _exit:
                         }
                     }
                 }
+                // 之前 split的时候，有可能在每一页中，添加了dump图片，这里把dump图片，也添加到水印列表中。
+                // 假如在某一页中存在dump图片，需要把这个dump删除，进行还原
                 AppenDumpImageToList(foundSameObjectList);
                 Color setColor;
                 bool isSpecifiedColor = ColorTools.ARGB2RGB(tb_color.Text, out setColor);
@@ -569,10 +573,10 @@ _exit:
                     string splitPdfFilePath = Path.Combine(TEMP_SPLIT, $"{pageNum}.pdf");
                     string outputPdfFilePath = Path.Combine(TEMP_PURE, $"{pageNum}.pdf");
                     AppendLog("start processing page: " + pageNum);
-                    PdfDocument document;
+                    PdfDocument documentOnePage; // 这个文件只有一页
                     try
                     {
-                        document = PdfDocument.Load(splitPdfFilePath);
+                        documentOnePage = PdfDocument.Load(splitPdfFilePath);
                     }
                     catch (Exception ex)
                     {
@@ -587,14 +591,15 @@ _exit:
                         continue;
                     }
 
-                    PdfPage pageObj = document.Pages[0]; // only one
+                    PdfPage pageObj = documentOnePage.Pages[0]; // only one
                     WatermarkTextFound targetWatermarkFound = watermarkFounds.FirstOrDefault(w => w.page == pageNum);
 
                     for (int j = pageObj.PageObjects.Count - 1; j >= 0; j--)
                     {
                         FS_RECTF rect = pageObj.PageObjects[j].BoundingBox;
                         PointF outTolerance = new PointF(0, 0);
-                        // check ,if exist dump image
+                        // check ,if exist dump image ,delete it 
+                        // 当前页的当前object，是否属于 待去掉的列表
                         if (SearchObjectFromSameFoundList(pageObj.PageObjects[j], foundSameObjectList))
                         {
                             removeCount++;
@@ -664,7 +669,7 @@ _exit:
 
                     // save
                     Console.WriteLine("newName: " + outputPdfFilePath);
-                    document.WriteBlock += (s, ex) => {
+                    documentOnePage.WriteBlock += (s, ex) => {
                         using (var stream = new FileStream(outputPdfFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                         {
                             stream.Seek(0, SeekOrigin.End);
@@ -672,8 +677,8 @@ _exit:
                             stream.Close();
                         }
                     };
-                    document.Save(Patagames.Pdf.Enums.SaveFlags.NoIncremental | Patagames.Pdf.Enums.SaveFlags.RemoveUnusedObjects);
-                    document.Dispose();
+                    documentOnePage.Save(Patagames.Pdf.Enums.SaveFlags.NoIncremental | Patagames.Pdf.Enums.SaveFlags.RemoveUnusedObjects);
+                    documentOnePage.Dispose();
                     pageObj.Dispose();
                 }
             }

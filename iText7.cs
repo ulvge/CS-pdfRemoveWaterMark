@@ -145,25 +145,32 @@ namespace pdfRemoveWaterMark
 
                 for (int pageNum = 1; pageNum <= oriFileDoc.GetNumberOfPages(); pageNum++)
                 {
-                    if (!IsPageInPageRange(pageNum))
+                    try
                     {
-                        continue;
+                        if (!IsPageInPageRange(pageNum))
+                        {
+                            continue;
+                        }
+                        PdfPage page = oriFileDoc.GetPage(pageNum);
+
+                        // 创建输出PDF文档
+                        string outputPdfFilePath = System.IO.Path.Combine(splitTempFolder, $"{pageNum}.pdf");
+
+                        PdfWriter pdfWriter = new PdfWriter(outputPdfFilePath);
+                        PdfDocument outputPdfDocument = new PdfDocument(pdfWriter);
+                        // 复制当前页到输出文档
+                        oriFileDoc.CopyPagesTo(pageNum, pageNum, outputPdfDocument);
+                        outputPdfDocument.FlushCopiedObjects(oriFileDoc);
+                        appendLog($"Page {pageNum} saved to: {outputPdfFilePath}", false);
+                        outputPdfDocument.Close();  // write file
+                        pdfWriter.Close();
+
+                        PdfSplitAppendObject(outputPdfFilePath, MainForm.g_dumpImageCoordinate);
                     }
-                    PdfPage page = oriFileDoc.GetPage(pageNum);
-
-                    // 创建输出PDF文档
-                    string outputPdfFilePath = System.IO.Path.Combine(splitTempFolder, $"{pageNum}.pdf");
-
-                    PdfWriter pdfWriter = new PdfWriter(outputPdfFilePath);
-                    PdfDocument outputPdfDocument = new PdfDocument(pdfWriter);
-                    // 复制当前页到输出文档
-                    oriFileDoc.CopyPagesTo(pageNum, pageNum, outputPdfDocument);
-                    outputPdfDocument.FlushCopiedObjects(oriFileDoc);
-                    appendLog($"Page {pageNum} saved to: {outputPdfFilePath}", false);
-                    outputPdfDocument.Close();  // write file
-                    pdfWriter.Close();
-
-                    PdfSplitAppendObject(outputPdfFilePath, MainForm.g_dumpImageCoordinate);
+                    catch (Exception ex)
+                    {
+                        appendLog("PdfSplit:" + ex.Message);
+                    }
                 }
                 oriFileDoc.Close();
                 oriFilePdfReader.Close();
