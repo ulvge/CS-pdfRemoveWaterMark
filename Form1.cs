@@ -31,12 +31,13 @@ namespace pdfRemoveWaterMark
         string g_outputImagePath = string.Empty;
         private int g_pageNumber = 0;
         string[] g_selectedFileList;
-        bool isSetSuccess;
+        bool isSetDateSuccess = false;
+        string g_realDateStr = string.Empty;
 
-        public MainForm(bool isSetSuccess)
+
+        public MainForm()
         {
             InitializeComponent();
-            this.isSetSuccess = isSetSuccess;
         }
 
         private void AddUsage()
@@ -97,10 +98,6 @@ namespace pdfRemoveWaterMark
             }
             cb_isText_CheckedChanged(cb_isText, null);
             cb_isImage_CheckedChanged(cb_isImage, null);
-            if (!isSetSuccess)
-            {
-                //MessageBox.Show("not run in administrator!!!", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         private void AbordWorkThread()
@@ -128,6 +125,8 @@ namespace pdfRemoveWaterMark
             iniHelper.IniUpdate2File(this, excludeName);
 
             iniHelper.writeString(this.Name, pageModeFiled, rb_all.Checked.ToString());
+            string msg;
+            ModifyLocalDateTime.RestoreLocalTime(out msg);
         }
 
         private class ImageRectArea
@@ -253,9 +252,8 @@ namespace pdfRemoveWaterMark
                 Directory.CreateDirectory(outputPdfFolder);
             }
             string oriFileNameOnly = System.IO.Path.GetFileNameWithoutExtension(oriFileName);
-            string date = ModifyLocalDateTime.GetLocalRealTime().ToString("yyyy_MM_dd");
             string time = DateTime.Now.ToString("HHmmss");
-            string outputFileName = System.IO.Path.Combine(outputPdfFolder, $"{oriFileNameOnly}_{date +"-" + time}.pdf");
+            string outputFileName = System.IO.Path.Combine(outputPdfFolder, $"{oriFileNameOnly}_{g_realDateStr + "-" + time}.pdf");
             return outputFileName;
         }
         /// <summary>
@@ -737,6 +735,15 @@ _exit:
                 MessageBox.Show("请先选择文件");
                 return;
             }
+            g_realDateStr = ModifyLocalDateTime.GetLocalRealTime().ToString("yyyy_MM_dd");
+            string msg;
+            isSetDateSuccess = ModifyLocalDateTime.SetLocalTime(out msg);
+            if (!isSetDateSuccess)
+            {
+                MessageBox.Show("请修改系统时间");
+                return;
+            }
+
             ThreadMainWork(g_selectedFileList);
         }
 
@@ -914,6 +921,9 @@ _exit:
 
             OpenPath(g_outputPdfFolder);
             AppendLog("finished success");
+            string msg;
+            ModifyLocalDateTime.RestoreLocalTime(out msg);
+            AppendLog("RestoreLocalTime" + msg);
         }
 
         private void ClearWorkTemp(string path)
